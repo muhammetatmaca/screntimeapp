@@ -6,6 +6,7 @@ import '../../../onboarding/presentation/widgets/onboarding_buttons.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
 import '../../../focus/presentation/screens/focus_mode_screen.dart';
 import '../../../focus/presentation/screens/detox_screen.dart';
+import '../../../focus/presentation/screens/pomodoro_screen.dart';
 import '../../data/home_data.dart';
 import '../widgets/weekly_chart.dart';
 import '../widgets/app_limit_card.dart';
@@ -341,6 +342,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() => _showFocusMenu = false);
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const DetoxScreen()),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _FocusMenuButton(
+              label: 'Pomodoro Modu',
+              icon: Icons.timer_rounded,
+              color: const Color(0xFFFF5252),
+              onTap: () {
+                setState(() => _showFocusMenu = false);
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const PomodoroScreen()),
                 );
               },
             ),
@@ -1999,4 +2012,3 @@ class _AppUsageItem extends StatelessWidget {
     );
   }
 }
-

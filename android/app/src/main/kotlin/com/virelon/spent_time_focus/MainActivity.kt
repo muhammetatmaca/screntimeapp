@@ -1,6 +1,6 @@
-package com.virelon.spent_time_focus
-
 import android.app.AppOpsManager
+import android.provider.Settings
+import android.content.ComponentName
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
@@ -40,6 +40,14 @@ class MainActivity: FlutterActivity() {
                     
                     val stats = getUsageForDateRange(startTime, endTime)
                     result.success(stats)
+                }
+                "checkNotificationPermission" -> {
+                    result.success(isNotificationServiceEnabled())
+                }
+                "requestNotificationPermission" -> {
+                    val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                    startActivity(intent)
+                    result.success(true)
                 }
                 "getAppIcon" -> {
                     val packageName = call.argument<String>("packageName")
@@ -261,5 +269,20 @@ class MainActivity: FlutterActivity() {
             }
         }
         return resultList
+    }
+
+    private fun isNotificationServiceEnabled(): Boolean {
+        val pkgName = packageName
+        val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+        if (flat != null && flat.isNotEmpty()) {
+            val names = flat.split(":").toTypedArray()
+            for (name in names) {
+                val cn = ComponentName.unflattenFromString(name)
+                if (cn != null && pkgName == cn.packageName) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

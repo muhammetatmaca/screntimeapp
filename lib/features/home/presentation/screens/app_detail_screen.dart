@@ -4,6 +4,7 @@ import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/presentation/widgets/onboarding_buttons.dart';
 import '../../data/home_data.dart';
 import '../../../../core/services/usage_service.dart';
+import '../../../../core/services/limit_service.dart';
 
 /// App detail screen showing usage statistics for a specific app
 class AppDetailScreen extends StatefulWidget {
@@ -23,9 +24,6 @@ class AppDetailScreen extends StatefulWidget {
 }
 
 class _AppDetailScreenState extends State<AppDetailScreen> {
-  // İçerik Odaklanma toggleları
-  bool _reelsBlocked = true;
-  bool _storiesBlocked = false;
   String _displayTitle = "";
   String _effectiveIconType = "default";
   Duration? _usageDuration;
@@ -40,6 +38,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     _resolveDisplayName();
     _loadAppUsage();
   }
+
 
   void _resolveDisplayName() {
     if (widget.appName.contains('.')) {
@@ -120,12 +119,6 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                   // Daily usage chart
                   _buildUsageChart(),
                   const SizedBox(height: 24),
-                  // Content Focus section
-                  _buildContentFocusSection(),
-                  const SizedBox(height: 24),
-                  // History section
-                  _buildHistorySection(),
-                  const SizedBox(height: 24),
                   // Additional info
                   _buildAdditionalInfo(),
                   const SizedBox(height: 120),
@@ -137,80 +130,6 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
       ),
       // Bottom button
       bottomSheet: _buildBottomButton(),
-    );
-  }
-
-  Widget _buildContentFocusSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            'İÇERİK ODAKLANMA',
-            style: AppTextStyles.overline.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: AppColors.gray100,
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 12,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Instagram Reels
-              _ContentFocusItem(
-                icon: Icons.movie_rounded,
-                iconColor: const Color(0xFFDB2777),
-                iconBgColor: const Color(0xFFFCE7F3),
-                title: '${widget.appName} Reels',
-                subtitle: '45 dk',
-                statusText: 'Engelleme: ${_reelsBlocked ? "AÇIK" : "KAPALI"}',
-                statusColor: _reelsBlocked ? AppColors.error : AppColors.textSecondary,
-                value: _reelsBlocked,
-                onChanged: (v) => setState(() => _reelsBlocked = v),
-              ),
-              Divider(height: 1, color: AppColors.gray100),
-              // Stories
-              _ContentFocusItem(
-                icon: Icons.amp_stories_rounded,
-                iconColor: const Color(0xFFEA580C),
-                iconBgColor: const Color(0xFFFFF7ED),
-                title: 'Hikayeler',
-                subtitle: '12 dk harcandı',
-                value: _storiesBlocked,
-                onChanged: (v) => setState(() => _storiesBlocked = v),
-                isLast: true,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
-          child: Text(
-            'Kısa süreli video içerikleri için özel zaman sınırları belirleyebilir veya tamamen erişimi kısıtlayabilirsiniz.',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -264,22 +183,8 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                   ),
                 ),
               ),
-              // Edit button
-              GestureDetector(
-                onTap: () {
-                  // Edit
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(
-                    'Düzenle',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.iosBlue,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
+              // Spacer to balance the back button
+              const SizedBox(width: 60),
             ],
           ),
         ),
@@ -370,32 +275,18 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   }
 
   Widget _buildStatsCards() {
-    return Row(
-      children: [
-        Expanded(
-          child: _StatCard(
-            icon: Icons.schedule,
-            iconColor: AppColors.iosBlue,
-            iconBgColor: AppColors.iosBlue.withOpacity(0.1),
-            label: 'SÜRE',
-            value: _usageDuration != null 
-                ? AppUsageData.formatDuration(_usageDuration!) 
-                : 'Yükleniyor...',
-            subtitle: 'Bugünkü Kullanım',
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _StatCard(
-            icon: Icons.touch_app_rounded,
-            iconColor: const Color(0xFF8B5CF6),
-            iconBgColor: const Color(0xFF8B5CF6).withOpacity(0.1),
-            label: 'OTURUM',
-            value: '12 kez',
-            subtitle: 'Bugünkü Açılış',
-          ),
-        ),
-      ],
+    return Container(
+      width: double.infinity,
+      child: _StatCard(
+        icon: Icons.schedule,
+        iconColor: AppColors.iosBlue,
+        iconBgColor: AppColors.iosBlue.withOpacity(0.1),
+        label: 'BUGÜNKÜ KULLANIM',
+        value: _usageDuration != null 
+            ? AppUsageData.formatDuration(_usageDuration!) 
+            : 'Yükleniyor...',
+        subtitle: 'Toplam ekran süresi',
+      ),
     );
   }
 
@@ -480,47 +371,6 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     );
   }
 
-  Widget _buildHistorySection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            'DETAYLI GEÇMİŞ',
-            style: AppTextStyles.overline.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _HistoryItem(day: 'Dün', date: '21 Ekim', duration: '1s 12dk'),
-              const Divider(height: 1, indent: 20),
-              _HistoryItem(day: 'Salı', date: '20 Ekim', duration: '45dk'),
-              const Divider(height: 1, indent: 20),
-              _HistoryItem(day: 'Pazartesi', date: '19 Ekim', duration: '2s 05dk', showBorder: false),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildAdditionalInfo() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -537,9 +387,9 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
       ),
       child: Column(
         children: [
-          _InfoRow(label: 'Oturum Sayısı', value: '12 kez/gün'),
+          _InfoRow(label: 'Kategori', value: widget.category),
           const Divider(height: 24),
-          _InfoRow(label: 'Kategori Limiti', value: 'Belirlenmedi', valueColor: AppColors.iosBlue),
+          _InfoRow(label: 'Paket Adı', value: widget.appName, valueColor: AppColors.textTertiary),
         ],
       ),
     );
@@ -552,10 +402,122 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
       child: BlueButton(
         text: 'Süre Limiti Ekle',
         onPressed: () {
-          // Add time limit
+          _showAddLimitDialog();
         },
         showArrow: false,
       ),
+    );
+  }
+
+  void _showAddLimitDialog() {
+    int hours = 1;
+    int minutes = 0;
+    
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          padding: const EdgeInsets.all(32),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('Süre Limiti Belirle', style: AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.w800)),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$_displayTitle için günlük kullanım limiti seçin.',
+                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildPickerColumn('Saat', 0, 23, hours, (val) => setModalState(() => hours = val)),
+                  const Text(':', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                  _buildPickerColumn('Dakika', 0, 59, minutes, (val) => setModalState(() => minutes = val)),
+                ],
+              ),
+              const SizedBox(height: 32),
+              BlueButton(
+                text: 'Limiti Kaydet',
+                onPressed: () async {
+                  final limitMinutes = (hours * 60) + minutes;
+                  if (limitMinutes == 0) return;
+
+                  await LimitService.saveLimit(AppLimit(
+                    packageName: widget.appName,
+                    appName: _displayTitle,
+                    limitMinutes: limitMinutes,
+                  ));
+                  
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('$_displayTitle için ${hours}sa ${minutes}dk limit eklendi'),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                  }
+                },
+                showArrow: false,
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPickerColumn(String label, int min, int max, int current, Function(int) onSelected) {
+    return Column(
+      children: [
+        Text(label, style: AppTextStyles.overline.copyWith(color: AppColors.textTertiary)),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 150,
+          width: 80,
+          child: ListWheelScrollView.useDelegate(
+            itemExtent: 50,
+            onSelectedItemChanged: onSelected,
+            physics: const FixedExtentScrollPhysics(),
+            controller: FixedExtentScrollController(initialItem: current),
+            childDelegate: ListWheelChildBuilderDelegate(
+              childCount: max - min + 1,
+              builder: (context, index) {
+                final val = index + min;
+                final isSelected = val == current;
+                return Center(
+                  child: Text(
+                    val.toString().padLeft(2, '0'),
+                    style: TextStyle(
+                      fontSize: isSelected ? 32 : 24,
+                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                      color: isSelected ? AppColors.textPrimary : AppColors.gray300,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -663,127 +625,58 @@ class _ChartBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Tooltip(
-        message: _formatDuration(duration),
-        preferBelow: false,
-        verticalOffset: 20,
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        textStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-        ),
-        child: GestureDetector(
-          onLongPress: () {
-            // Tooltip otomatik gösterilir
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      // Background
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppColors.gray100,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-                      // Fill
-                      FractionallySizedBox(
-                        heightFactor: percentage,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: AppColors.iosBlue,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  label,
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: isHighlighted ? AppColors.textPrimary : AppColors.textSecondary,
-                    fontWeight: isHighlighted ? FontWeight.w700 : FontWeight.w500,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            // Duration label on top
+            Text(
+              _formatDuration(duration),
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.w600,
+                color: isHighlighted ? AppColors.iosBlue : AppColors.textSecondary,
+              ),
             ),
-          ),
+            const SizedBox(height: 4),
+            Expanded(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  // Background
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.gray100,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  // Fill
+                  FractionallySizedBox(
+                    heightFactor: percentage,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.iosBlue,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: AppTextStyles.labelSmall.copyWith(
+                color: isHighlighted ? AppColors.textPrimary : AppColors.textSecondary,
+                fontWeight: isHighlighted ? FontWeight.w700 : FontWeight.w500,
+                fontSize: 11,
+              ),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _HistoryItem extends StatelessWidget {
-  final String day;
-  final String date;
-  final String duration;
-  final bool showBorder;
-
-  const _HistoryItem({
-    required this.day,
-    required this.date,
-    required this.duration,
-    this.showBorder = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                day,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                date,
-                style: AppTextStyles.labelSmall.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Text(
-                duration,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right,
-                color: AppColors.gray300,
-                size: 18,
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
@@ -819,146 +712,3 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-
-/// Content Focus Item widget with toggle switch
-class _ContentFocusItem extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBgColor;
-  final String title;
-  final String subtitle;
-  final String? statusText;
-  final Color? statusColor;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-  final bool isLast;
-
-  const _ContentFocusItem({
-    required this.icon,
-    required this.iconColor,
-    required this.iconBgColor,
-    required this.title,
-    required this.subtitle,
-    this.statusText,
-    this.statusColor,
-    required this.value,
-    required this.onChanged,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        children: [
-          // Icon
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: iconBgColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: iconColor, size: 22),
-          ),
-          const SizedBox(width: 12),
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Text(
-                      subtitle,
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    if (statusText != null) ...[
-                      Text(
-                        ' • ',
-                        style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      Text(
-                        statusText!,
-                        style: AppTextStyles.labelSmall.copyWith(
-                          color: statusColor ?? AppColors.error,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Toggle
-          _IOSToggle(
-            value: value,
-            onChanged: onChanged,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// iOS style toggle switch
-class _IOSToggle extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _IOSToggle({
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onChanged(!value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 50,
-        height: 30,
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          color: value ? AppColors.success : AppColors.gray200,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: AnimatedAlign(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
-          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(13),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 3,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-

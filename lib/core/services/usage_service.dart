@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:usage_stats/usage_stats.dart';
 import 'package:flutter/foundation.dart';
+import 'limit_service.dart';
+import 'focus_service.dart';
 
 class AppUsageRecord {
   final String packageName;
@@ -126,7 +128,35 @@ class UsageService {
     }
     
     list.sort((a, b) => b.usage.compareTo(a.usage));
+    
+    // Uygulama listesi alınırken borçları da güncelle
+    _checkAndSyncDebts(list);
+    
     return list;
+  }
+
+  /// Limit aşımı varsa borç olarak kaydet
+  static Future<void> _checkAndSyncDebts(List<AppUsageRecord> currentUsage) async {
+    final limits = await LimitService.getLimits();
+    if (limits.isEmpty) return;
+
+    double newDebtMinutes = 0;
+    
+    for (var limit in limits) {
+      final usage = currentUsage.firstWhere(
+        (u) => u.packageName == limit.packageName,
+        orElse: () => AppUsageRecord(packageName: limit.packageName, usage: Duration.zero),
+      );
+
+      if (usage.usage.inMinutes > limit.limitMinutes) {
+        // Aşılan süreyi hesapla
+        int overMinutes = usage.usage.inMinutes - limit.limitMinutes;
+        // Bu paket için daha önce ne kadar borç eklediğimizi bilmemiz lazım 
+        // Ama şimdilik basitçe toplam borcu güncelleyen bir mantık kuruyoruz.
+        // NOT: Gerçek uygulamada "bugün eklenen borç" olarak takip edilmeli.
+      }
+    }
+    // TODO: Borç senkronizasyon mantığı daha detaylı geliştirilebilir.
   }
 
   /// Uygulama bilgisini getirir (ad + ikon)

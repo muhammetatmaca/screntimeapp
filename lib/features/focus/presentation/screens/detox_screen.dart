@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/services/focus_service.dart';
 
 /// Detox Mode Screen - Borç Ödeme
 class DetoxScreen extends StatefulWidget {
@@ -15,10 +16,21 @@ class _DetoxScreenState extends State<DetoxScreen> {
   bool _isActive = false;
   Timer? _timer;
   int _elapsedSeconds = 0;
-  int _earnedMinutes = 0;
-  
-  // Başlangıç borcu (dakika)
-  final int _totalDebtMinutes = 150; // 2 saat 30 dk
+  double _earnedMinutes = 0;
+  DetoxDebt? _currentDebt;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDebt();
+  }
+
+  Future<void> _loadDebt() async {
+    final debt = await FocusService.getDebt();
+    if (mounted) {
+      setState(() => _currentDebt = debt);
+    }
+  }
   
   @override
   void dispose() {
@@ -36,14 +48,20 @@ class _DetoxScreenState extends State<DetoxScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _elapsedSeconds++;
-        // Her 120 saniye (2 dk) başına 1 dk kazanıyoruz (takas oranı: 10dk ekran kilidi = 5dk borç silme)
-        _earnedMinutes = (_elapsedSeconds / 120).floor();
+        // 2 saniye detoks = 1 saniye borç silme (2:1 oranı)
+        // Burada saniyeyi dakikaya çevirip FocusService'e uygun hale getiriyoruz
+        _earnedMinutes = _elapsedSeconds / 120; // 120sn detoks = 1dk borç silme
       });
     });
   }
 
-  void _stopDetox() {
+  Future<void> _stopDetox() async {
     _timer?.cancel();
+    if (_elapsedSeconds > 0) {
+      // Borcu kalıcı olarak düşür
+      await FocusService.reduceDebt(_elapsedSeconds / 60);
+      await _loadDebt();
+    }
     setState(() {
       _isActive = false;
     });
@@ -55,9 +73,10 @@ class _DetoxScreenState extends State<DetoxScreen> {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
-  String _formatDebt(int minutes) {
-    int hours = minutes ~/ 60;
-    int mins = minutes % 60;
+  String _formatDebt(double minutes) {
+    int totalMinutes = minutes.round();
+    int hours = totalMinutes ~/ 60;
+    int mins = totalMinutes % 60;
     if (hours > 0) {
       return '${hours}sa ${mins}dk';
     }
@@ -108,11 +127,11 @@ class _DetoxScreenState extends State<DetoxScreen> {
           ),
           // Content
           Expanded(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 20),
                   // Badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -138,20 +157,27 @@ class _DetoxScreenState extends State<DetoxScreen> {
                   ),
                   const SizedBox(height: 16),
                   // Debt display
-                  RichText(
-                    text: TextSpan(
-                      style: AppTextStyles.displayLarge.copyWith(
-                        fontSize: 56,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -2,
-                      ),
-                      children: [
-                        TextSpan(text: '2', style: TextStyle(color: AppColors.textPrimary)),
-                        TextSpan(text: 'sa ', style: TextStyle(color: AppColors.textTertiary, fontSize: 28, fontWeight: FontWeight.w500)),
-                        TextSpan(text: '30', style: TextStyle(color: AppColors.textPrimary)),
-                        TextSpan(text: 'dk', style: TextStyle(color: AppColors.textTertiary, fontSize: 28, fontWeight: FontWeight.w500)),
-                      ],
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final totalMinutes = _currentDebt?.totalMinutes.round() ?? 0;
+                      final h = totalMinutes ~/ 60;
+                      final m = totalMinutes % 60;
+                      return RichText(
+                        text: TextSpan(
+                          style: AppTextStyles.displayLarge.copyWith(
+                            fontSize: 56,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -2,
+                          ),
+                          children: [
+                            TextSpan(text: '$h', style: TextStyle(color: AppColors.textPrimary)),
+                            TextSpan(text: 'sa ', style: TextStyle(color: AppColors.textTertiary, fontSize: 28, fontWeight: FontWeight.w500)),
+                            TextSpan(text: '$m', style: TextStyle(color: AppColors.textPrimary)),
+                            TextSpan(text: 'dk', style: TextStyle(color: AppColors.textTertiary, fontSize: 28, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -228,7 +254,7 @@ class _DetoxScreenState extends State<DetoxScreen> {
                         Expanded(
                           child: _PreviewCard(
                             label: 'Kazanılan',
-                            value: '+0 dk',
+                            value: '+${_earnedMinutes.toStringAsFixed(1)} dk',
                             valueColor: const Color(0xFF13EC5B),
                           ),
                         ),
@@ -243,6 +269,7 @@ class _DetoxScreenState extends State<DetoxScreen> {
                       letterSpacing: 2,
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -297,8 +324,6 @@ class _DetoxScreenState extends State<DetoxScreen> {
   }
 
   Widget _buildActiveView() {
-    int remainingDebt = _totalDebtMinutes - _earnedMinutes;
-    
     return SafeArea(
       child: Column(
         children: [
@@ -342,103 +367,105 @@ class _DetoxScreenState extends State<DetoxScreen> {
           ),
           // Main content
           Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Decorative circles
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 288,
-                      height: 288,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                children: [
+                  // Decorative circles
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 288,
+                        height: 288,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        ),
                       ),
-                    ),
-                    Container(
-                      width: 340,
-                      height: 340,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+                      Container(
+                        width: 340,
+                        height: 340,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        ),
                       ),
-                    ),
-                    // Pulse effect
-                    Container(
-                      width: 192,
-                      height: 192,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF13EC5B).withOpacity(0.05),
-                        shape: BoxShape.circle,
+                      // Pulse effect
+                      Container(
+                        width: 192,
+                        height: 192,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF13EC5B).withOpacity(0.05),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
-                    // Timer display
-                    Column(
+                      // Timer display
+                      Column(
+                        children: [
+                          Text(
+                            'KİLİTLİ SÜRE',
+                            style: AppTextStyles.overline.copyWith(
+                              color: AppColors.textSecondary,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _formatTime(_elapsedSeconds),
+                            style: TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 72,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                              letterSpacing: -4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 48),
+                  // Stats
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 48),
+                    child: Row(
                       children: [
-                        Text(
-                          'KİLİTLİ SÜRE',
-                          style: AppTextStyles.overline.copyWith(
-                            color: AppColors.textSecondary,
-                            letterSpacing: 2,
+                        Expanded(
+                          child: _StatBox(
+                            icon: Icons.savings_rounded,
+                            iconColor: const Color(0xFF13EC5B),
+                            value: _earnedMinutes.toStringAsFixed(1),
+                            unit: 'dk',
+                            label: 'KAZANILAN',
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          _formatTime(_elapsedSeconds),
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 72,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white,
-                            letterSpacing: -4,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _StatBox(
+                            icon: Icons.timelapse_rounded,
+                            iconColor: Colors.grey,
+                            value: _formatDebt((_currentDebt?.totalMinutes ?? 0) - _earnedMinutes),
+                            label: 'KALAN BORÇ',
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 48),
-                // Stats
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 48),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _StatBox(
-                          icon: Icons.savings_rounded,
-                          iconColor: const Color(0xFF13EC5B),
-                          value: '${_earnedMinutes}',
-                          unit: 'dk',
-                          label: 'KAZANILAN',
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _StatBox(
-                          icon: Icons.timelapse_rounded,
-                          iconColor: Colors.grey,
-                          value: _formatDebt(remainingDebt),
-                          label: 'KALAN BORÇ',
-                        ),
-                      ),
-                    ],
                   ),
-                ),
-                const SizedBox(height: 48),
-                // Motivational text
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 64),
-                  child: Text(
-                    'Harika gidiyorsun. Telefonundan uzaklaş ve hayatın tadını çıkar.',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.4),
+                  const SizedBox(height: 48),
+                  // Motivational text
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 64),
+                    child: Text(
+                      'Harika gidiyorsun. Telefonundan uzaklaş ve hayatın tadını çıkar.',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: Colors.white.withOpacity(0.4),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           // Stop button

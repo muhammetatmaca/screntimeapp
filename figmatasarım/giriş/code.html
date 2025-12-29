@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="tr"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Giriş Ekranı - Ekran Süresi Faturası</title>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script id="tailwind-config">
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Giriş Ekranı - Ekran Süresi Faturası</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
         tailwind.config = {
             theme: {
                 extend: {
@@ -38,84 +43,94 @@
             },
         }
     </script>
-<style>
+    <style>
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
     </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+
 <body class="bg-ios-bg text-ios-text font-display overflow-x-hidden antialiased h-full">
-<div class="relative flex flex-col min-h-[100dvh] w-full max-w-md mx-auto justify-between pb-8 bg-white">
-<div class="flex items-center justify-between px-6 pt-6 pb-2">
-<div class="flex items-center gap-2">
-<div class="flex items-center justify-center w-8 h-8 rounded-full bg-ios-gray text-ios-text">
-<span class="material-symbols-outlined" style="font-size: 18px;">receipt_long</span>
-</div>
-<span class="text-xs font-semibold tracking-wider uppercase text-gray-500">Ekran Faturası</span>
-</div>
-<button class="text-sm font-medium text-ios-blue hover:text-blue-700 transition-colors">Atla</button>
-</div>
-<div class="flex-1 flex flex-col px-6 gap-8 justify-center mt-4">
-<div class="relative w-full aspect-[4/4] rounded-[32px] overflow-hidden shadow-soft group bg-gray-50">
-<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Futuristic digital cybersecurity interface with neon green data visualization glowing in dark" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD7TVExbdOkspiaPFvbW17qrLRTuU-h9nw8VS_qWzdoWjWVM0Qdjheko-FghYuXO1l2JdHETl_kxb_Sqn2--TXHgk958Dao1F5ShGqUk4kvoLS04gdtrkMEjLtMVx8QbW_CLR1vMqY_w8AVuyiywP5iye88OX8sd3lVdgnMBR9IyX9UGqQsXF9J4rI6kBrAqZ_6uMU0rQ_KvCr_q5oR0fp7UClS8ICjjK95V-9wc0_nlre170Lx8J8G1QoV_TKH4mFWciouoZEbS4U'); filter: saturate(0.8) contrast(1.1);">
-</div>
-<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40"></div>
-<div class="absolute bottom-6 left-6 right-6">
-<div class="bg-white/90 backdrop-blur-xl border border-white/50 p-5 rounded-2xl shadow-card">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-ios-blue text-sm">schedule</span>
-<span class="text-xs text-gray-500 font-semibold">Bu Hafta</span>
-</div>
-<span class="bg-blue-50 text-ios-blue text-[10px] font-bold px-2 py-1 rounded-full">+24%</span>
-</div>
-<div class="flex items-end justify-between">
-<div>
-<p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mb-1">Toplam Maliyet</p>
-<p class="text-2xl font-bold text-gray-900 tracking-tight">₺1.450,90</p>
-</div>
-<div class="h-8 w-16 flex items-end justify-between gap-1">
-<div class="w-full bg-blue-200 rounded-t-sm h-[40%]"></div>
-<div class="w-full bg-blue-400 rounded-t-sm h-[70%]"></div>
-<div class="w-full bg-ios-blue rounded-t-sm h-[100%]"></div>
-<div class="w-full bg-blue-300 rounded-t-sm h-[60%]"></div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="flex flex-col gap-4 text-center mt-2">
-<h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">
+    <div class="relative flex flex-col min-h-[100dvh] w-full max-w-md mx-auto justify-between pb-8 bg-white">
+        <div class="flex items-center justify-between px-6 pt-6 pb-2">
+            <div class="flex items-center gap-2">
+                <div class="flex items-center justify-center w-8 h-8 rounded-full bg-ios-gray text-ios-text">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">receipt_long</span>
+                </div>
+                <span class="text-xs font-semibold tracking-wider uppercase text-gray-500">Ekran Faturası</span>
+            </div>
+            <button class="text-sm font-medium text-ios-blue hover:text-blue-700 transition-colors">Atla</button>
+        </div>
+        <div class="flex-1 flex flex-col px-6 gap-8 justify-center mt-4">
+            <div class="relative w-full aspect-[4/4] rounded-[32px] overflow-hidden shadow-soft group bg-gray-50">
+                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                    data-alt="Futuristic digital cybersecurity interface with neon green data visualization glowing in dark"
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD7TVExbdOkspiaPFvbW17qrLRTuU-h9nw8VS_qWzdoWjWVM0Qdjheko-FghYuXO1l2JdHETl_kxb_Sqn2--TXHgk958Dao1F5ShGqUk4kvoLS04gdtrkMEjLtMVx8QbW_CLR1vMqY_w8AVuyiywP5iye88OX8sd3lVdgnMBR9IyX9UGqQsXF9J4rI6kBrAqZ_6uMU0rQ_KvCr_q5oR0fp7UClS8ICjjK95V-9wc0_nlre170Lx8J8G1QoV_TKH4mFWciouoZEbS4U'); filter: saturate(0.8) contrast(1.1);">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40"></div>
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="bg-white/90 backdrop-blur-xl border border-white/50 p-5 rounded-2xl shadow-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-ios-blue text-sm">schedule</span>
+                                <span class="text-xs text-gray-500 font-semibold">Bu Hafta</span>
+                            </div>
+                            <span
+                                class="bg-blue-50 text-ios-blue text-[10px] font-bold px-2 py-1 rounded-full">+24%</span>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p class="text-[10px] text-gray-400 font-medium uppercase tracking-wide mb-1">Toplam
+                                    Dakika</p>
+                                <p class="text-2xl font-bold text-gray-900 tracking-tight">1.450 dk</p>
+                            </div>
+                            <div class="h-8 w-16 flex items-end justify-between gap-1">
+                                <div class="w-full bg-blue-200 rounded-t-sm h-[40%]"></div>
+                                <div class="w-full bg-blue-400 rounded-t-sm h-[70%]"></div>
+                                <div class="w-full bg-ios-blue rounded-t-sm h-[100%]"></div>
+                                <div class="w-full bg-blue-300 rounded-t-sm h-[60%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4 text-center mt-2">
+                <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900">
                     Zamanın <span class="text-ios-blue">Gerçek</span> Bedeli
                 </h1>
-<p class="text-[15px] font-normal text-gray-500 leading-relaxed px-4">
+                <p class="text-[15px] font-normal text-gray-500 leading-relaxed px-4">
                     Telefonunuzda harcadığınız süreyi nakite çevirip gösteriyoruz. Farkındalık kazanın, tasarruf edin.
                 </p>
-</div>
-</div>
-<div class="flex flex-col items-center gap-8 px-6 pt-2">
-<div class="flex items-center justify-center gap-2">
-<div class="h-1.5 w-6 rounded-full bg-ios-blue"></div>
-<div class="h-1.5 w-1.5 rounded-full bg-gray-300"></div>
-<div class="h-1.5 w-1.5 rounded-full bg-gray-300"></div>
-</div>
-<div class="w-full space-y-3">
-<button class="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl h-[56px] bg-ios-blue text-white text-[17px] font-semibold hover:bg-blue-600 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/20">
-<span>Hemen Başla</span>
-<span class="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1" style="font-size: 20px;">arrow_forward</span>
-</button>
-<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl h-[56px] bg-ios-gray text-black text-[17px] font-semibold hover:bg-gray-200 transition-all active:scale-[0.98]">
-<span>Giriş Yap</span>
-</button>
-</div>
-</div>
-</div>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 px-6 pt-2">
+            <div class="flex items-center justify-center gap-2">
+                <div class="h-1.5 w-6 rounded-full bg-ios-blue"></div>
+                <div class="h-1.5 w-1.5 rounded-full bg-gray-300"></div>
+                <div class="h-1.5 w-1.5 rounded-full bg-gray-300"></div>
+            </div>
+            <div class="w-full space-y-3">
+                <button
+                    class="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl h-[56px] bg-ios-blue text-white text-[17px] font-semibold hover:bg-blue-600 transition-all active:scale-[0.98] shadow-lg shadow-blue-500/20">
+                    <span>Hemen Başla</span>
+                    <span class="material-symbols-outlined ml-1 transition-transform group-hover:translate-x-1"
+                        style="font-size: 20px;">arrow_forward</span>
+                </button>
+                <button
+                    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-2xl h-[56px] bg-ios-gray text-black text-[17px] font-semibold hover:bg-gray-200 transition-all active:scale-[0.98]">
+                    <span>Giriş Yap</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-</body></html>
+</body>
+
+</html>

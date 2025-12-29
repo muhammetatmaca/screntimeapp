@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/services/focus_service.dart';
 
 /// Focus Mode Screen - Odak Modu
 class FocusModeScreen extends StatefulWidget {
@@ -21,10 +22,37 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
   int _remainingSeconds = 0;
   
   // App blocking states
-  bool _instagramBlocked = true;
-  bool _tiktokBlocked = true;
-  bool _youtubeBlocked = false;
-  bool _snapchatBlocked = false;
+  final Set<String> _blockedPackages = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFocusState();
+  }
+
+  Future<void> _loadFocusState() async {
+    final state = await FocusService.getFocusState();
+    if (mounted) {
+      setState(() {
+        _isActive = state.isActive;
+        _blockedPackages.addAll(state.blockedPackages);
+        if (_isActive && state.startTime != null) {
+          // Eğer uygulama kapandıysa ve hala süresi varsa buradan devam edebilir
+          // (Şimdilik basit tutuyoruz, her girişte baştan başlatabilir veya devam ettirebiliriz)
+        }
+      });
+    }
+  }
+
+  void _toggleApp(String package, bool block) {
+    setState(() {
+      if (block) {
+        _blockedPackages.add(package);
+      } else {
+        _blockedPackages.remove(package);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -32,10 +60,24 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
     super.dispose();
   }
 
-  void _startFocus() {
+  Future<void> _startFocus() async {
+    // Önce bildirim erişimi iznini kontrol et
+    bool hasPermission = await FocusService.checkNotificationPermission();
+    if (!hasPermission) {
+      _showPermissionDialog();
+      return;
+    }
+
     int totalSeconds = _hours * 3600 + _minutes * 60 + _seconds;
     if (totalSeconds <= 0) return;
     
+    final state = FocusModeState(
+      isActive: true,
+      blockedPackages: _blockedPackages.toList(),
+      startTime: DateTime.now(),
+    );
+    await FocusService.saveFocusState(state);
+
     setState(() {
       _isActive = true;
       _remainingSeconds = totalSeconds;
@@ -44,7 +86,7 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingSeconds <= 0) {
         timer.cancel();
-        setState(() => _isActive = false);
+        _stopFocus();
         _showCompletionDialog();
       } else {
         setState(() => _remainingSeconds--);
@@ -52,11 +94,45 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
     });
   }
 
-  void _stopFocus() {
+  Future<void> _stopFocus() async {
     _timer?.cancel();
+    final state = FocusModeState(
+      isActive: false,
+      blockedPackages: _blockedPackages.toList(),
+    );
+    await FocusService.saveFocusState(state);
     setState(() {
       _isActive = false;
     });
+  }
+
+  void _showPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Bildirim Erişimi Gerekli'),
+        content: const Text(
+          'Odak modu aktifken bildirimleri engelleyebilmemiz için "Bildirim Erişimi" izni vermeniz gerekiyor. Ayarlara gitmek ister misiniz?'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('İptal'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              FocusService.requestNotificationPermission();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF13EC5B),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Ayarlara Git'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showCompletionDialog() {
@@ -196,10 +272,12 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                _instagramBlocked = true;
-                                _tiktokBlocked = true;
-                                _youtubeBlocked = true;
-                                _snapchatBlocked = true;
+                                _blockedPackages.addAll([
+                                  'com.instagram.android',
+                                  'com.zhiliaoapp.musically',
+                                  'com.google.android.youtube',
+                                  'com.snapchat.android'
+                                ]);
                               });
                             },
                             child: Text(
@@ -227,24 +305,24 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                           colors: [Color(0xFFFCAF45), Color(0xFFFF543E), Color(0xFFC837AB)],
                         ),
                         icon: Icons.camera_alt_rounded,
-                        isBlocked: _instagramBlocked,
-                        onChanged: (v) => setState(() => _instagramBlocked = v),
+                        isBlocked: _blockedPackages.contains('com.instagram.android'),
+                        onChanged: (v) => _toggleApp('com.instagram.android', v),
                       ),
                       const SizedBox(height: 12),
                       _AppBlockItem(
                         name: 'TikTok',
                         color: Colors.black,
                         icon: Icons.music_note_rounded,
-                        isBlocked: _tiktokBlocked,
-                        onChanged: (v) => setState(() => _tiktokBlocked = v),
+                        isBlocked: _blockedPackages.contains('com.zhiliaoapp.musically'),
+                        onChanged: (v) => _toggleApp('com.zhiliaoapp.musically', v),
                       ),
                       const SizedBox(height: 12),
                       _AppBlockItem(
                         name: 'YouTube Shorts',
                         color: const Color(0xFFFF0000),
                         icon: Icons.play_arrow_rounded,
-                        isBlocked: _youtubeBlocked,
-                        onChanged: (v) => setState(() => _youtubeBlocked = v),
+                        isBlocked: _blockedPackages.contains('com.google.android.youtube'),
+                        onChanged: (v) => _toggleApp('com.google.android.youtube', v),
                       ),
                       const SizedBox(height: 12),
                       _AppBlockItem(
@@ -252,8 +330,8 @@ class _FocusModeScreenState extends State<FocusModeScreen> {
                         color: const Color(0xFFFFFC00),
                         icon: Icons.chat_bubble_rounded,
                         iconColor: Colors.black,
-                        isBlocked: _snapchatBlocked,
-                        onChanged: (v) => setState(() => _snapchatBlocked = v),
+                        isBlocked: _blockedPackages.contains('com.snapchat.android'),
+                        onChanged: (v) => _toggleApp('com.snapchat.android', v),
                       ),
                     ],
                     if (_isActive)
