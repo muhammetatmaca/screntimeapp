@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Widget Ayarları</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#ffffff",
+                        "background-dark": "#102216",
+                        "surface-light": "#f6f8f6",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "ios": "0 2px 20px rgba(0,0,0,0.08)",
+                        "widget": "0 4px 24px rgba(0,0,0,0.06)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar Hide */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* iOS Toggle Switch Styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #13ec5b;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #13ec5b;
+        }
+        
+        /* Widget Shape Smoothing for iOS feel */
+        .ios-squircle {
+            border-radius: 22px; 
+            /* Approximate iOS widget radius */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#111813] dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto border-x border-gray-100 dark:border-gray-800">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+<div class="flex items-center justify-between px-4 py-3">
+<button class="flex items-center justify-center p-2 -ml-2 text-blue-600 dark:text-primary rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_back_ios_new</span>
+<span class="text-base font-medium ml-1">Ayarlar</span>
+</button>
+<h1 class="text-base font-bold text-center absolute left-1/2 -translate-x-1/2 text-[#111813] dark:text-white">Widgetlar</h1>
+<div class="w-10"></div> <!-- Spacer for visual balance -->
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col gap-8 pb-10">
+<!-- Hero Description -->
+<div class="px-6 pt-6">
+<h2 class="text-3xl font-bold tracking-tight mb-2">Ana Ekranınızı<br/><span class="text-primary dark:text-primary/90">Kişiselleştirin</span></h2>
+<p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                    Harcamalarınızı ve ekran sürenizi takip etmek için widget'ları ana ekranınıza ekleyin.
+                </p>
+</div>
+<!-- Widget Type 1: Fatura Özeti (Bill Summary) -->
+<section class="flex flex-col gap-4">
+<div class="px-6 flex items-center justify-between">
+<h3 class="text-lg font-bold">Fatura Özeti</h3>
+<span class="text-xs font-medium px-2 py-1 bg-primary/20 text-green-800 dark:text-green-300 rounded-full">Popüler</span>
+</div>
+<!-- Preview Area -->
+<div class="w-full bg-surface-light dark:bg-gray-900 py-10 overflow-hidden relative">
+<!-- Abstract Background Pattern for Context -->
+<div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="relative flex justify-center items-center">
+<!-- Medium Widget Preview -->
+<div class="w-[320px] h-[150px] bg-white dark:bg-[#1c1c1e] ios-squircle shadow-widget p-5 flex flex-col justify-between relative overflow-hidden group">
+<!-- Decorative bg element inside widget -->
+<div class="absolute -right-6 -top-6 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+<div class="flex justify-between items-start z-10">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-primary text-[18px]">receipt_long</span>
+<span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Bugün</span>
+</div>
+<span class="text-3xl font-extrabold tracking-tight dark:text-white">₺24,50</span>
+</div>
+<div class="text-right">
+<span class="block text-xs text-gray-400 dark:text-gray-500">Süre</span>
+<span class="block text-sm font-bold dark:text-gray-200">3s 12dk</span>
+</div>
+</div>
+<!-- Progress Bar Visual -->
+<div class="w-full space-y-2 z-10">
+<div class="flex justify-between text-[10px] text-gray-400 font-medium">
+<span>Harcama Limiti</span>
+<span>%45</span>
+</div>
+<div class="w-full h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 45%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Configuration Controls -->
+<div class="px-6 space-y-4">
+<!-- Size Selector -->
+<div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-xl flex shadow-inner">
+<button class="flex-1 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 rounded-lg hover:text-gray-900 dark:hover:text-white">Küçük</button>
+<button class="flex-1 py-1.5 text-xs font-bold text-[#111813] bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">Orta</button>
+<button class="flex-1 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 rounded-lg hover:text-gray-900 dark:hover:text-white">Büyük</button>
+</div>
+<!-- Toggles -->
+<div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+<label class="flex items-center justify-between py-3 cursor-pointer">
+<span class="text-sm font-medium">Harcama Limitini Göster</span>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:bg-white border-gray-300 checked:border-primary transition-all duration-300" name="toggle" type="checkbox"/>
+<div class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300"></div>
+</div>
+</label>
+<label class="flex items-center justify-between py-3 cursor-pointer">
+<span class="text-sm font-medium">Döviz Simgesi</span>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:bg-white border-gray-300 checked:border-primary transition-all duration-300" name="toggle2" type="checkbox"/>
+<div class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<div class="h-px bg-gray-100 dark:bg-gray-800 mx-6"></div>
+<!-- Widget Type 2: Detoks & Odak (Detox) -->
+<section class="flex flex-col gap-4">
+<div class="px-6">
+<h3 class="text-lg font-bold">Detoks Durumu</h3>
+</div>
+<!-- Preview Area -->
+<div class="w-full bg-surface-light dark:bg-gray-900 py-10 overflow-hidden relative flex justify-center items-center">
+<div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Small Widget Preview -->
+<div class="w-[150px] h-[150px] bg-[#111813] ios-squircle shadow-widget p-4 flex flex-col items-center justify-center relative group text-white">
+<div class="absolute inset-0 rounded-[22px] border-2 border-primary/20"></div>
+<!-- Ring Chart SVG Mockup -->
+<div class="relative w-16 h-16 mb-2 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-gray-700" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="6"></circle>
+<circle cx="32" cy="32" fill="transparent" r="28" stroke="#13ec5b" stroke-dasharray="175" stroke-dashoffset="40" stroke-linecap="round" stroke-width="6"></circle>
+</svg>
+<span class="absolute material-symbols-outlined text-primary text-xl">spa</span>
+</div>
+<div class="text-center">
+<span class="block text-xl font-bold leading-none mb-1">45dk</span>
+<span class="block text-[10px] text-gray-400 font-medium">Odaklanıldı</span>
+</div>
+</div>
+</div>
+<!-- Configuration Controls -->
+<div class="px-6 space-y-4">
+<!-- Size Selector -->
+<div class="bg-gray-100 dark:bg-gray-800 p-1 rounded-xl flex shadow-inner">
+<button class="flex-1 py-1.5 text-xs font-bold text-[#111813] bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">Küçük</button>
+<button class="flex-1 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 rounded-lg hover:text-gray-900 dark:hover:text-white">Orta</button>
+</div>
+<!-- Toggles -->
+<div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+<label class="flex items-center justify-between py-3 cursor-pointer">
+<span class="text-sm font-medium">Karanlık Mod Teması</span>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer checked:bg-white border-gray-300 checked:border-primary transition-all duration-300" name="toggle3" type="checkbox"/>
+<div class="toggle-label block overflow-hidden h-5 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300"></div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- How to Add Guide -->
+<section class="mx-6 mt-4 p-5 bg-surface-light dark:bg-gray-800/50 rounded-2xl border border-gray-100 dark:border-gray-800">
+<div class="flex items-start gap-3">
+<div class="bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm shrink-0">
+<span class="material-symbols-outlined text-primary">add_to_home_screen</span>
+</div>
+<div>
+<h4 class="text-sm font-bold mb-1">Widget Nasıl Eklenir?</h4>
+<ol class="text-xs text-gray-500 dark:text-gray-400 space-y-1.5 list-decimal list-inside marker:text-primary marker:font-bold">
+<li>Ana ekranda boş bir yere basılı tutun.</li>
+<li>Sol üst köşedeki <span class="font-bold text-gray-700 dark:text-gray-300">( + )</span> butonuna dokunun.</li>
+<li>Listeden "Ekran Faturası"nı seçin.</li>
+</ol>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action -->
+<div class="sticky bottom-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-gray-100 dark:border-gray-800 p-4">
+<button class="w-full bg-[#111813] dark:bg-white text-white dark:text-[#111813] font-bold py-3.5 px-4 rounded-xl shadow-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span>Tamamla</span>
+</button>
+</div>
+</div>
+<!-- Script to handle custom CSS for toggle switch dynamic coloring if needed, kept minimal as per rules -->
+<script>
+        // Simple logic to ensure the toggle color matches the design requirement
+        const toggles = document.querySelectorAll('.toggle-checkbox');
+        toggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const label = this.nextElementSibling;
+                if(this.checked) {
+                    label.style.backgroundColor = '#13ec5b'; // Primary
+                    this.style.borderColor = '#13ec5b';
+                } else {
+                    label.style.backgroundColor = '#d1d5db'; // Gray-300
+                    this.style.borderColor = '#d1d5db';
+                }
+            });
+            // Init state
+            const label = toggle.nextElementSibling;
+            if(toggle.checked) {
+                label.style.backgroundColor = '#13ec5b';
+                toggle.style.borderColor = '#13ec5b';
+            }
+        });
+    </script>
+</body></html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Odak Modu - Ekran Süresi Faturası</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "background-light": "#ffffff",
+                        "background-dark": "#102216",
+                        "surface-light": "#f6f8f6",
+                        "text-main": "#111813",
+                        "text-subtle": "#6b7280",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem", 
+                        "lg": "0.75rem", 
+                        "xl": "1rem", 
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 20px rgba(19, 236, 91, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar hide for cleaner look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center justify-center overflow-hidden">
+<!-- Mobile Container -->
+<div class="relative w-full max-w-md h-screen max-h-[900px] flex flex-col bg-white dark:bg-background-dark overflow-y-auto no-scrollbar shadow-2xl">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-50 bg-white/90 dark:bg-background-dark/90 backdrop-blur-md border-b border-gray-100 dark:border-white/5">
+<div class="flex items-center justify-between p-4 pb-2">
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors text-text-main dark:text-white">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-text-main dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Odak Modu</h2>
+<div class="size-10"></div> <!-- Spacer for center alignment -->
+</div>
+</div>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-6 pt-4 pb-24">
+<!-- Headline -->
+<div class="mb-6 text-center">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+                    Hazır
+                </span>
+<p class="text-text-subtle dark:text-gray-400 text-sm font-medium">Hedef Süre</p>
+</div>
+<!-- Timer Display -->
+<div class="flex justify-center items-end gap-2 mb-10">
+<div class="flex flex-col items-center gap-2">
+<div class="relative bg-surface-light dark:bg-white/5 px-4 py-8 rounded-2xl min-w-[80px] text-center border border-gray-100 dark:border-white/5">
+<span class="text-6xl font-extrabold text-text-main dark:text-white tracking-tighter">00</span>
+</div>
+<span class="text-xs text-text-subtle font-medium uppercase tracking-wide">Saat</span>
+</div>
+<span class="text-4xl font-bold text-gray-300 dark:text-gray-600 mb-12">:</span>
+<div class="flex flex-col items-center gap-2">
+<div class="relative bg-surface-light dark:bg-white/5 px-4 py-8 rounded-2xl min-w-[80px] text-center border border-gray-100 dark:border-white/5">
+<span class="text-6xl font-extrabold text-text-main dark:text-white tracking-tighter">25</span>
+</div>
+<span class="text-xs text-text-subtle font-medium uppercase tracking-wide">Dakika</span>
+</div>
+<span class="text-4xl font-bold text-gray-300 dark:text-gray-600 mb-12">:</span>
+<div class="flex flex-col items-center gap-2">
+<div class="relative bg-surface-light dark:bg-white/5 px-4 py-8 rounded-2xl min-w-[80px] text-center border border-gray-100 dark:border-white/5">
+<span class="text-6xl font-extrabold text-text-main dark:text-white tracking-tighter">00</span>
+</div>
+<span class="text-xs text-text-subtle font-medium uppercase tracking-wide">Saniye</span>
+</div>
+</div>
+<!-- Focus Configuration Section -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-text-main dark:text-white font-bold text-lg">Engellenecekler</h3>
+<button class="text-primary text-sm font-semibold hover:underline">Tümünü Seç</button>
+</div>
+<p class="text-text-subtle dark:text-gray-400 text-sm mb-4">
+                    Odak süresince aşağıdaki uygulamalardan bildirim almayacaksınız.
+                </p>
+<!-- App List -->
+<div class="grid grid-cols-1 gap-3">
+<!-- Instagram -->
+<label class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-white/5 hover:border-primary/30 hover:shadow-soft transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-xl">camera_alt</span> <!-- Placeholder for Instagram icon -->
+</div>
+<span class="text-text-main dark:text-white font-semibold text-base">Instagram</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<!-- TikTok -->
+<label class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-white/5 hover:border-primary/30 hover:shadow-soft transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-black flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-xl">music_note</span> <!-- Placeholder for TikTok icon -->
+</div>
+<span class="text-text-main dark:text-white font-semibold text-base">TikTok</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<!-- Youtube Shorts -->
+<label class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-white/5 hover:border-primary/30 hover:shadow-soft transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-xl">play_arrow</span> <!-- Placeholder for Youtube icon -->
+</div>
+<span class="text-text-main dark:text-white font-semibold text-base">YouTube Shorts</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+<!-- Snapchat -->
+<label class="group flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-white/5 hover:border-primary/30 hover:shadow-soft transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center text-white shadow-sm">
+<span class="material-symbols-outlined text-xl">chat_bubble</span> <!-- Placeholder for Snapchat icon -->
+</div>
+<span class="text-text-main dark:text-white font-semibold text-base">Snapchat</span>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/20 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</label>
+</div>
+</div>
+</main>
+<!-- Bottom Action Bar (Floating) -->
+<div class="fixed bottom-0 w-full max-w-md bg-white/80 dark:bg-background-dark/80 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 p-6">
+<div class="flex flex-col gap-3">
+<button class="w-full h-14 bg-primary hover:bg-[#0fd651] active:scale-[0.98] transition-all rounded-xl shadow-glow flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-white group-hover:animate-pulse">bolt</span>
+<span class="text-white text-lg font-bold tracking-wide">Odaklanmaya Başla</span>
+</button>
+<div class="flex justify-center">
+<button class="text-text-subtle dark:text-gray-500 text-sm font-medium hover:text-text-main dark:hover:text-white transition-colors">
+                        Ayarları Düzenle
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

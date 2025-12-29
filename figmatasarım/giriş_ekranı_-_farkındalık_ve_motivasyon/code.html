@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html class="light" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Giriş Ekranı - Farkındalık ve Motivasyon</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#13ec5b",
+            "background-light": "#ffffff", /* Explicitly white as requested */
+            "background-dark": "#ffffff", /* Force white for this specific request even in dark mode concept, though tailwind supports it */
+            "text-main": "#111813",
+            "text-sub": "#637569",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem", 
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Manrope', sans-serif;
+    }
+    /* Custom scrollbar hide for cleaner UI if needed */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-light text-text-main h-full w-full overflow-hidden">
+<div class="relative flex h-screen w-full flex-col bg-white group/design-root overflow-hidden max-w-md mx-auto shadow-xl">
+<!-- Top Bar -->
+<div class="flex items-center bg-white p-4 pt-8 justify-between z-10">
+<div class="w-12">
+<!-- Back button placeholder if needed, empty for now -->
+</div>
+<!-- Page Indicator (Moved to top for modern iOS feel, or keep centric) -->
+<!-- Let's follow the standard pattern: Content -> Indicators -> Button. So top bar is just Skip/Logo. -->
+<div class="flex w-12 items-center justify-end">
+<button class="text-text-sub text-sm font-bold leading-normal tracking-[0.015em] hover:text-primary transition-colors">
+          Atla
+        </button>
+</div>
+</div>
+<!-- Main Scrollable Content Area -->
+<div class="flex-1 flex flex-col items-center justify-center px-6 pb-4 overflow-y-auto no-scrollbar">
+<!-- Hero Image Area -->
+<div class="w-full relative mb-8 flex items-center justify-center">
+<!-- Abstract shape background -->
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl scale-75 z-0"></div>
+<div class="w-full aspect-square max-h-[340px] relative z-10 flex flex-col items-center justify-center">
+<div class="w-full h-full bg-center bg-contain bg-no-repeat" data-alt="Minimalist vector illustration showing a battery icon, a calendar grid, and a ruler" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC46W1epLOnSXY-lEEIL1p8rVl7wtQYVRbF_QumZAtFzell1XE11OnVEO_6CWo477IH6QujyU0ekR3DCRvN0_gYae2audpu_zXezB1kdn-6XpjrkXOI0dV2up0akdFa94sfpeaMLe2BvelVLY0sHkGYxhbyY0rEpIW-vAb4kg6pEboniaSWPPIPvvP9ex273Ul8WE5UymAI19dAthFkBto9NtAZfXI81VPDBWgh9ljJDfyBh4tGkkr9hlgdMq9ctFOGySkRkvysUfI"); border-radius: 24px;'>
+<!-- Overlay Elements to Simulate the "App UI" in the graphic -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl p-6 w-[80%] max-w-[280px] border border-gray-100 flex flex-col gap-4">
+<!-- Life Battery Item -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">battery_charging_full</span>
+</div>
+<div class="flex-1">
+<p class="text-xs text-text-sub font-medium">Yaşam Pili</p>
+<div class="w-full bg-gray-100 h-2 rounded-full mt-1 overflow-hidden">
+<div class="bg-primary h-full w-[75%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Scroll Distance Item -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+<span class="material-symbols-outlined text-2xl">straighten</span>
+</div>
+<div class="flex-1">
+<p class="text-xs text-text-sub font-medium">Kaydırma Mesafesi</p>
+<p class="text-sm font-bold text-text-main">124 metre</p>
+</div>
+</div>
+<!-- Chain Calendar Item -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
+<span class="material-symbols-outlined text-2xl">calendar_month</span>
+</div>
+<div class="flex-1">
+<p class="text-xs text-text-sub font-medium">Zinciri Kırma</p>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-gray-200"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Text Content -->
+<div class="flex flex-col items-center text-center space-y-4 max-w-xs mx-auto z-10">
+<h1 class="text-[#111813] tracking-tight text-[28px] font-extrabold leading-[1.2]">
+          Alışkanlıklarını Keşfet, Kendine Yatırım Yap
+        </h1>
+<p class="text-[#637569] text-[15px] font-medium leading-relaxed">
+          Günlük 'kaydırma mesafeni' gör, 'Yaşam Pili'ni takip et ve 'Zinciri Kırma' takvimiyle hedeflerine ulaş. Borçlarını 'Detoks Modu' ile öde!
+        </p>
+</div>
+</div>
+<!-- Bottom Actions Area -->
+<div class="w-full bg-white px-6 pb-10 pt-4 flex flex-col items-center gap-6 z-20">
+<!-- Page Indicators -->
+<div class="flex flex-row items-center justify-center gap-2">
+<div class="h-2 w-2 rounded-full bg-[#dbe6df] transition-colors duration-300"></div>
+<div class="h-2 w-2 rounded-full bg-[#dbe6df] transition-colors duration-300"></div>
+<div class="h-2 w-6 rounded-full bg-primary transition-all duration-300"></div> <!-- Active indicator elongated -->
+</div>
+<!-- Main Button -->
+<button class="w-full bg-primary text-black hover:bg-primary/90 active:scale-[0.98] transition-all h-14 rounded-2xl font-bold text-lg shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span>Hemen Başla</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>
