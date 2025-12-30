@@ -1,3 +1,5 @@
+package com.virelon.spent_time_focus
+
 import android.app.AppOpsManager
 import android.provider.Settings
 import android.content.ComponentName

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'core/theme/app_theme.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'features/home/presentation/screens/home_screen.dart';
+import 'core/services/settings_service.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Set preferred orientations
@@ -12,11 +14,16 @@ void main() {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const SpentApp());
+  // Check if onboarding is done
+  final bool isSetupDone = await SettingsService.isSetupDone();
+
+  runApp(SpentApp(isSetupDone: isSetupDone));
 }
 
 class SpentApp extends StatelessWidget {
-  const SpentApp({super.key});
+  final bool isSetupDone;
+  
+  const SpentApp({super.key, required this.isSetupDone});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +33,7 @@ class SpentApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light, // Start with light mode
-      home: const OnboardingScreen(),
+      home: isSetupDone ? const HomeScreen() : const OnboardingScreen(),
     );
   }
 }

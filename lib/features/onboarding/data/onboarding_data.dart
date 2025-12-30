@@ -63,8 +63,8 @@ class OnboardingData {
       cardData: OnboardingCardData(
         weekLabel: 'Bu Hafta',
         percentageChange: '+24%',
-        costLabel: 'Toplam Maliyet',
-        costValue: '₺1.450,90',
+        costLabel: 'Toplam Dakika',
+        costValue: '1450',
         chartValues: [0.4, 0.7, 1.0, 0.6],
       ),
     ),

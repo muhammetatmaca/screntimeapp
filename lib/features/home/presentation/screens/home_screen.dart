@@ -20,6 +20,7 @@ import '../../../invoice/presentation/screens/widget_settings_screen.dart';
 import '../../../../core/services/usage_service.dart';
 import '../../../../core/services/history_service.dart';
 import '../../../../core/services/settings_service.dart';
+import '../../../../core/services/widget_service.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
 
 /// Main home screen with usage summary
@@ -75,6 +76,76 @@ class _HomeScreenState extends State<HomeScreen> {
     await _loadLifeBatteryData();
     await _loadWeeklyData();
     await _loadAppsForDay(_selectedDayIndex);
+    
+    // Widget'ları güncelle
+    if (_weeklyData.isNotEmpty) {
+      final todayUsage = _weeklyData.last.usageTime;
+      final hours = todayUsage.inHours;
+      final mins = todayUsage.inMinutes % 60;
+      
+      // Kullanım Widgetı
+      await WidgetService.updateUsageWidget(
+        usageTime: '${hours}s ${mins}dk',
+        status: 'Spent: Odaklandın',
+      );
+
+      // Pil Widgetı
+      await WidgetService.updateBatteryWidget(
+        percentage: '%${(_lifeBatteryPercentage * 100).toInt()}',
+      );
+
+      // Kaydırma Widgetı
+      final scroll = await UsageService.getEstimatedScrollDistance(0);
+      await WidgetService.updateScrollWidget(
+          distance: scroll.formattedDistance,
+          comparison: scroll.comparisonText,
+      );
+
+      // Takvim Widgetı
+      final now = DateTime.now();
+      final months = ['OCAK', 'ŞUBAT', 'MART', 'NİSAN', 'MAYIS', 'HAZİRAN', 'TEMMUZ', 'AĞUSTOS', 'EYLÜL', 'EKİM', 'KASIM', 'ARALIK'];
+      final weekdays = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+      await WidgetService.updateCalendarWidget(
+        day: now.day.toString(),
+        month: months[now.month - 1],
+        weekday: weekdays[now.weekday - 1],
+      );
+
+      // Top Uygulamalar Widgetı
+      final topApps = await UsageService.getTodayAppList();
+      if (topApps.isNotEmpty) {
+        String formatApp(int index) {
+          if (index >= topApps.length) return '${index + 1}. -';
+          final app = topApps[index];
+          return '${index + 1}. ${app.packageName.split('.').last} - ${app.usage.inMinutes}dk';
+        }
+        await WidgetService.updateTopAppsWidget(
+          app1: formatApp(0),
+          app2: formatApp(1),
+          app3: formatApp(2),
+        );
+      }
+
+      // Pomodoro Widgetı (Statik başlangıç verisi veya mevcut servis entegrasyonu)
+      await WidgetService.updatePomodoroWidget(
+        timer: '25:00',
+        status: 'ODAKLANMA',
+        sessions: 'Seans: 0/4',
+      );
+
+      // Fatura Widgetı
+      await WidgetService.updateBillWidget(
+        item1: 'En Çok: ${topApps.isNotEmpty ? topApps.first.packageName.split('.').last : "-"}',
+        total: 'TOPLAM: ${hours}s ${mins}dk',
+      );
+
+      // Detoks Widgetı (Focus modu açıksa aktif göster)
+      await WidgetService.updateDetoxWidget(
+        status: 'HAZIR',
+        desc: 'Odaklanmaya başla',
+      );
+    }
+
     if (mounted) {
       setState(() {
         _currentUsage = _weeklyData.isNotEmpty 
@@ -347,7 +418,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
             _FocusMenuButton(
-              label: 'Pomodoro Modu',
+              label: 'Pomodoro',
               icon: Icons.timer_rounded,
               color: const Color(0xFFFF5252),
               onTap: () {
@@ -423,9 +494,14 @@ class _HomeScreenState extends State<HomeScreen> {
     
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedTabIndex = index),
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          setState(() => _selectedTabIndex = index);
+        },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
             color: isSelected ? Colors.white : Colors.transparent,
@@ -433,19 +509,20 @@ class _HomeScreenState extends State<HomeScreen> {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
                   ]
-                : null,
+                : [],
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: AppTextStyles.labelMedium.copyWith(
               color: isSelected ? AppColors.textPrimary : AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              fontSize: 13,
             ),
           ),
         ),

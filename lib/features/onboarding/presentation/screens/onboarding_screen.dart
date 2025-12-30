@@ -8,6 +8,7 @@ import '../widgets/onboarding_buttons.dart';
 import '../widgets/onboarding_page1.dart';
 import '../widgets/onboarding_page2.dart';
 import '../widgets/onboarding_page3.dart';
+import '../../../../core/services/settings_service.dart';
 
 /// Main Onboarding Screen with PageView
 class OnboardingScreen extends StatefulWidget {
@@ -86,12 +87,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _showSnackBar('Giriş Yap tıklandı - Giriş sayfasına yönlendirilecek');
   }
 
-  void _navigateToHome() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-    );
+  void _navigateToHome() async {
+    await SettingsService.setSetupDone();
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    }
   }
 
   void _showSnackBar(String message) {

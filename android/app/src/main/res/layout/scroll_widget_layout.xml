@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/scroll_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#FFF9E6"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:gravity="center_vertical">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="KAYDIRMA"
+            android:textColor="#FF9500"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_scroll_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/scroll_header"
+        android:layout_marginTop="6dp"
+        android:text="1.2 km"
+        android:textColor="#1C1C1E"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_scroll_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="3.5 Eyfel Kulesi"
+        android:textColor="#8E8E93"
+        android:textSize="11sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>

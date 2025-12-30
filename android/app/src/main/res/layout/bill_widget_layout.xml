@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DETAYLI FATURA"
+        android:textColor="#555555"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.05" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+        
+        <TextView
+            android:id="@+id/bill_item_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sosyal Medya: 2s"
+            android:textColor="#1C1C1E"
+            android:textSize="11sp" />
+            
+        <TextView
+            android:id="@+id/bill_total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="TOPLAM: 4s 15dk"
+            android:textColor="#FF3B30"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</LinearLayout>

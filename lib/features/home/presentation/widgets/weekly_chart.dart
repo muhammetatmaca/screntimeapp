@@ -19,11 +19,12 @@ class WeeklyChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(data.length, (index) => Expanded(
           child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => onDaySelected?.call(index),
             child: _DayBar(
               data: data[index],
@@ -45,10 +46,18 @@ class _DayBar extends StatelessWidget {
     required this.maxUsage,
   });
 
+  String _formatUsage(Duration duration) {
+    if (duration == Duration.zero) return "0s";
+    final hours = duration.inHours;
+    final mins = duration.inMinutes % 60;
+    if (hours > 0) return "${hours}s";
+    return "${mins}dk";
+  }
+
   @override
   Widget build(BuildContext context) {
     final percentage = (data.usageTime.inMinutes / maxUsage.inMinutes).clamp(0.0, 1.0);
-    const maxBarHeight = 140.0;
+    const maxBarHeight = 120.0;
     final barHeight = maxBarHeight * percentage;
     
     return Padding(
@@ -56,6 +65,16 @@ class _DayBar extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Usage Time on Top
+          Text(
+            _formatUsage(data.usageTime),
+            style: AppTextStyles.labelSmall.copyWith(
+              fontSize: 9,
+              color: data.isSelected ? AppColors.textPrimary : AppColors.textTertiary,
+              fontWeight: data.isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          const SizedBox(height: 6),
           // Bar container
           SizedBox(
             height: maxBarHeight,
@@ -84,9 +103,9 @@ class _DayBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: data.isSelected ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
                     ] : null,
                   ),

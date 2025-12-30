@@ -11,11 +11,22 @@ class WidgetSettingsScreen extends StatefulWidget {
 }
 
 class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
-  int _summarySizeIndex = 1; // 0: Küçük, 1: Orta, 2: Büyük
+  int _usageSizeIndex = 1; // 0: Küçük, 1: Orta
+  int _batterySizeIndex = 0; // 0: Küçük
+  int _topAppsSizeIndex = 1; // 1: Orta
   int _detoxSizeIndex = 0; // 0: Küçük, 1: Orta
-  bool _showSpendingLimit = true;
-  bool _showCurrencySymbol = true;
-  bool _isDarkModeTheme = true;
+  int _calendarSizeIndex = 1; // 1: Orta
+  int _pomodoroSizeIndex = 0; // 0: Küçük
+  int _billSizeIndex = 2; // 2: Büyük (Fatura için)
+  int _scrollSizeIndex = 1; // 1: Orta
+  
+  bool _showTimeGoal = true;
+  bool _showAppNameShortcuts = true;
+  bool _isDarkModeTheme = false;
+  bool _showPercentageInBattery = true;
+  bool _showWeekNumbers = false;
+  bool _showSessionCount = true;
+  bool _showScrollComparison = true;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +78,7 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Harcamalarınızı ve ekran sürenizi takip etmek için widget\'ları ana ekranınıza ekleyin.',
+                    'Kullanım alışkanlıklarınızı anlık olarak takip etmek için widget\'ları ana ekranınıza ekleyin.',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                       height: 1.5,
@@ -77,25 +88,69 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
               ),
             ),
 
-            // Bill Summary Section
-            _buildSectionHeader('Fatura Özeti', showBadge: true),
+            // Usage Summary Section
+            _buildSectionHeader('Kullanım Özeti', showBadge: true),
             _buildWidgetPreviewArea(
-              child: _buildBillSummaryWidget(),
+              child: _buildUsageSummaryWidget(),
               isDark: false,
             ),
             _buildControls(
-              sizeIndex: _summarySizeIndex,
-              onSizeChanged: (i) => setState(() => _summarySizeIndex = i),
+              sizeIndex: _usageSizeIndex,
+              onSizeChanged: (i) => setState(() => _usageSizeIndex = i),
+              count: 2,
               toggles: [
                 _ControlToggle(
-                  label: 'Harcama Limitini Göster',
-                  value: _showSpendingLimit,
-                  onChanged: (v) => setState(() => _showSpendingLimit = v),
+                  label: 'Kullanım Hedefini Göster',
+                  value: _showTimeGoal,
+                  onChanged: (v) => setState(() => _showTimeGoal = v),
                 ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Life Battery Section
+            _buildSectionHeader('Yaşam Pili'),
+            _buildWidgetPreviewArea(
+              child: _buildBatteryWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _batterySizeIndex,
+              onSizeChanged: (i) => setState(() => _batterySizeIndex = i),
+              count: 1,
+              toggles: [
                 _ControlToggle(
-                  label: 'Döviz Simgesi',
-                  value: _showCurrencySymbol,
-                  onChanged: (v) => setState(() => _showCurrencySymbol = v),
+                  label: 'Yüzde Göster',
+                  value: _showPercentageInBattery,
+                  onChanged: (v) => setState(() => _showPercentageInBattery = v),
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Top Apps Section
+            _buildSectionHeader('En Çok Kullanılanlar'),
+            _buildWidgetPreviewArea(
+              child: _buildTopAppsWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _topAppsSizeIndex,
+              onSizeChanged: (i) => setState(() => _topAppsSizeIndex = i),
+              count: 2,
+              toggles: [
+                _ControlToggle(
+                  label: 'Uygulama İsimlerini Göster',
+                  value: _showAppNameShortcuts,
+                  onChanged: (v) => setState(() => _showAppNameShortcuts = v),
                 ),
               ],
             ),
@@ -106,7 +161,7 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
             ),
 
             // Detox Status Section
-            _buildSectionHeader('Detoks Durumu'),
+            _buildSectionHeader('Detoks & Borç'),
             _buildWidgetPreviewArea(
               child: _buildDetoxStatusWidget(),
               isDark: false,
@@ -120,6 +175,96 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                   label: 'Karanlık Mod Teması',
                   value: _isDarkModeTheme,
                   onChanged: (v) => setState(() => _isDarkModeTheme = v),
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Calendar Section
+            _buildSectionHeader('Takvim Görünümü'),
+            _buildWidgetPreviewArea(
+              child: _buildCalendarWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _calendarSizeIndex,
+              onSizeChanged: (i) => setState(() => _calendarSizeIndex = i),
+              count: 2,
+              toggles: [
+                _ControlToggle(
+                  label: 'Hafta Numaralarını Göster',
+                  value: _showWeekNumbers,
+                  onChanged: (v) => setState(() => _showWeekNumbers = v),
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Pomodoro Section
+            _buildSectionHeader('Pomodoro Saati'),
+            _buildWidgetPreviewArea(
+              child: _buildPomodoroWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _pomodoroSizeIndex,
+              onSizeChanged: (i) => setState(() => _pomodoroSizeIndex = i),
+              count: 2,
+              toggles: [
+                _ControlToggle(
+                  label: 'Tamamlanan Seansları Göster',
+                  value: _showSessionCount,
+                  onChanged: (v) => setState(() => _showSessionCount = v),
+                ),
+              ],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Detailed Bill Section
+            _buildSectionHeader('Dijital Fatura (Top 5)'),
+            _buildWidgetPreviewArea(
+              child: _buildDetailedBillWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _billSizeIndex,
+              onSizeChanged: (i) => setState(() => _billSizeIndex = i),
+              count: 3,
+              toggles: [],
+            ),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Divider(height: 64),
+            ),
+
+            // Scroll Distance Section
+            _buildSectionHeader('Kaydırma Mesafesi'),
+            _buildWidgetPreviewArea(
+              child: _buildScrollWidget(),
+              isDark: false,
+            ),
+            _buildControls(
+              sizeIndex: _scrollSizeIndex,
+              onSizeChanged: (i) => setState(() => _scrollSizeIndex = i),
+              count: 2,
+              toggles: [
+                _ControlToggle(
+                  label: 'Karşılaştırmayı Göster',
+                  value: _showScrollComparison,
+                  onChanged: (v) => setState(() => _showScrollComparison = v),
                 ),
               ],
             ),
@@ -214,9 +359,9 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
     );
   }
 
-  Widget _buildBillSummaryWidget() {
-    final width = _summarySizeIndex == 0 ? 150.0 : 320.0;
-    final height = 150.0;
+  Widget _buildUsageSummaryWidget() {
+    final width = _usageSizeIndex == 0 ? 150.0 : 320.0;
+    const height = 150.0;
 
     return Container(
       width: width,
@@ -246,7 +391,7 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.receipt_long_rounded, color: AppColors.primary, size: 18),
+                      const Icon(Icons.schedule_rounded, color: AppColors.iosBlue, size: 18),
                       const SizedBox(width: 4),
                       Text(
                         'BUGÜN',
@@ -259,45 +404,36 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      if (_showCurrencySymbol)
-                        const Text(
-                          '₺',
-                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
-                        ),
-                      const Text(
-                        '24,50',
-                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
-                      ),
-                    ],
+                  const Text(
+                    '3s 12dk',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -1),
                   ),
                 ],
               ),
-              if (_summarySizeIndex != 0)
+              if (_usageSizeIndex != 0)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'Süre',
+                      'Düne Göre',
                       style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary),
                     ),
                     const Text(
-                      '3s 12dk',
-                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                      '-%12',
+                      style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.success),
                     ),
                   ],
                 ),
             ],
           ),
-          if (_showSpendingLimit)
+          if (_showTimeGoal)
             Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Harcama Limiti',
+                      'Günlük Limit',
                       style: TextStyle(fontSize: 10, color: AppColors.textTertiary, fontWeight: FontWeight.w600),
                     ),
                     const Text(
@@ -319,7 +455,7 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                     widthFactor: 0.45,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
+                        color: AppColors.iosBlue,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -329,6 +465,128 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBatteryWidget() {
+    const width = 150.0;
+    const height = 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.success.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.battery_charging_full_rounded, color: AppColors.success, size: 20),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Yaşam Pili',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                _showPercentageInBattery ? '%84' : 'Dolu',
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopAppsWidget() {
+    const width = 320.0;
+    const height = 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'EN ÇOK KULLANILANLAR',
+            style: AppTextStyles.overline.copyWith(color: AppColors.textTertiary, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildAppStat('Instagram', '1s 20dk', Colors.purple, 1.0),
+                _buildAppStat('YouTube', '45dk', Colors.red, 0.6),
+                _buildAppStat('Twitter', '32dk', Colors.blue, 0.4),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppStat(String name, String time, Color color, double progress) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: CircularProgressIndicator(
+                value: progress,
+                strokeWidth: 4,
+                color: color,
+                backgroundColor: color.withOpacity(0.1),
+                strokeCap: StrokeCap.round,
+              ),
+            ),
+            Icon(Icons.apps_rounded, color: color, size: 20),
+          ],
+        ),
+        if (_showAppNameShortcuts) ...[
+          const SizedBox(height: 8),
+          Text(name, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700)),
+          Text(time, style: TextStyle(fontSize: 9, color: AppColors.textTertiary)),
+        ],
+      ],
     );
   }
 
@@ -406,6 +664,254 @@ class _WidgetSettingsScreenState extends State<WidgetSettingsScreen> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalendarWidget() {
+    final isSmall = _calendarSizeIndex == 0;
+    final width = isSmall ? 150.0 : 320.0;
+    const height = 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 24),
+        ],
+      ),
+      padding: EdgeInsets.symmetric(horizontal: isSmall ? 10 : 16, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Aralık 2023',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: isSmall ? 10 : 13,
+                ),
+              ),
+              if (_showWeekNumbers && !isSmall)
+                const Text('H.52', style: TextStyle(fontSize: 10, color: AppColors.textTertiary)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(isSmall ? 5 : 7, (index) {
+                final days = ['P', 'S', 'Ç', 'P', 'C', 'C', 'P'];
+                final isToday = index == (isSmall ? 2 : 4);
+                return Column(
+                  children: [
+                    Text(days[index], style: TextStyle(fontSize: isSmall ? 8 : 10, color: AppColors.textTertiary)),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: isSmall ? 18 : 24,
+                      height: isSmall ? 18 : 24,
+                      decoration: BoxDecoration(
+                        color: isToday ? AppColors.iosBlue : ((isSmall ? index < 2 : index < 4) ? AppColors.success.withOpacity(0.2) : Colors.transparent),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${20 + index}',
+                          style: TextStyle(
+                            fontSize: isSmall ? 8 : 10,
+                            fontWeight: FontWeight.bold,
+                            color: isToday ? Colors.white : AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPomodoroWidget() {
+    final width = _pomodoroSizeIndex == 0 ? 150.0 : 320.0;
+    const height = 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: const Color(0xFFFF5252),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: const Color(0xFFFF5252).withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 4)),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(Icons.timer_rounded, color: Colors.white, size: 24),
+              if (_showSessionCount)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(10)),
+                  child: const Text('Seans: 3', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                ),
+            ],
+          ),
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('ODAKLAN', style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              SizedBox(height: 2),
+              Text('24:12', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w300, fontFamily: 'monospace')),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailedBillWidget() {
+    final width = _billSizeIndex == 0 ? 150.0 : (_billSizeIndex == 1 ? 320.0 : 320.0);
+    final height = _billSizeIndex == 2 ? 280.0 : 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 30, offset: const Offset(0, 10)),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('DİJİTAL FATURA', style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                  const Text('3s 45dk', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
+                ],
+              ),
+              const Icon(Icons.qr_code_2_rounded, size: 40, color: AppColors.textPrimary),
+            ],
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Divider(height: 1),
+          ),
+          const Text('İLK 5 UYGULAMA', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textTertiary)),
+          const SizedBox(height: 8),
+          Expanded(
+            child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                _buildBillItem('Instagram', '1s 12dk', Colors.purple),
+                _buildBillItem('YouTube', '45dk', Colors.red),
+                _buildBillItem('Twitter', '32dk', Colors.blue),
+                _buildBillItem('WhatsApp', '28dk', Colors.green),
+                _buildBillItem('TikTok', '22dk', Colors.black),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBillItem(String name, String time, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(width: 6, height: 6, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+              const SizedBox(width: 8),
+              Text(name, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          Text(time, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScrollWidget() {
+    final isSmall = _scrollSizeIndex == 0;
+    final width = isSmall ? 150.0 : 320.0;
+    const height = 150.0;
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 24),
+        ],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: Colors.amber.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                child: const Icon(Icons.swap_vert_rounded, color: Colors.amber, size: 20),
+              ),
+              if (!isSmall)
+                Text(
+                  'KAYDIRMA',
+                  style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary, fontWeight: FontWeight.bold, letterSpacing: 1),
+                ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('1.2 km', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: AppColors.textPrimary, letterSpacing: -1)),
+              if (_showScrollComparison && !isSmall) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Text('🗼', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '3.5 Eyfel Kulesi',
+                      style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+              ],
+            ],
           ),
         ],
       ),

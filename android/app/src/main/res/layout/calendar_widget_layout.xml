@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/calendar_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ARALIK"
+        android:textColor="#FF3B30"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2" />
+
+    <TextView
+        android:id="@+id/calendar_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30"
+        android:textColor="#1C1C1E"
+        android:textSize="36sp"
+        android:fontFamily="sans-serif-thin"
+        android:textStyle="bold"
+        android:letterSpacing="-0.05" />
+
+    <TextView
+        android:id="@+id/calendar_weekday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0.6"
+        android:text="Salı"
+        android:textColor="#1C1C1E"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

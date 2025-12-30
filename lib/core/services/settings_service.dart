@@ -30,4 +30,10 @@ class SettingsService {
     await prefs.setDouble(_workKey, work);
     await prefs.setBool(_setupDoneKey, true);
   }
+
+  /// Sadece kurulum tamamlandı flag'ini set et
+  static Future<void> setSetupDone() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_setupDoneKey, true);
+  }
 }

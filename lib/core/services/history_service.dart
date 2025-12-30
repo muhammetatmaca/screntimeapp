@@ -140,7 +140,7 @@ class HistoryService {
       final date = now.subtract(Duration(days: i));
       final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
       
-      if (history.containsKey(dateStr)) {
+      if (history.containsKey(dateStr) && history[dateStr]['totalUsageMs'] != null) {
         totals.add((history[dateStr]['totalUsageMs'] as int) / 3600000.0); // Saat cinsinden
       } else {
         totals.add(0.0);
