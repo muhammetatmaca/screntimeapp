@@ -19,6 +19,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   
   double _sleepHours = 8.0;
   double _workHours = 8.0;
+  double _dailyGoal = 4.0;
   bool _isLoading = true;
   
   // Toggle states
@@ -36,10 +37,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadSettings() async {
     final sleep = await SettingsService.getSleepHours();
     final work = await SettingsService.getWorkHours();
+    final goal = await SettingsService.getDailyGoalHours();
     if (mounted) {
       setState(() {
         _sleepHours = sleep;
         _workHours = work;
+        _dailyGoal = goal;
         _isLoading = false;
       });
     }
@@ -48,23 +51,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/bg1.png',
-              fit: BoxFit.cover,
-            ),
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false, // Klavye açıldığında resmin bozulmaması için
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg1.png'),
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
           ),
-          // Dark overlay for better readability
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.3),
-            ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.4),
           ),
-          // Content
-          SafeArea(
+          child: SafeArea(
+            bottom: false,
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -98,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -170,10 +174,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Tabs
           Row(
             children: [
-              _buildTab('Hesap', 0),
-              const SizedBox(width: 20),
+              _buildTab('Gizlilik', 0),
               _buildTab('Bildirimler', 1),
-              const SizedBox(width: 20),
+              _buildTab('Uygulama', 2),
               _buildTab('Rutin', 3),
             ],
           ),
@@ -209,51 +212,125 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildContent() {
-    if (_selectedTab == 3) {
-      return _buildRoutineContent();
+    switch (_selectedTab) {
+      case 0:
+        return _buildPrivacyContent();
+      case 1:
+        return _buildNotificationContent();
+      case 2:
+        return _buildAppContent();
+      case 3:
+        return _buildRoutineContent();
+      default:
+        return _buildRoutineContent();
     }
-    
+  }
+
+  Widget _buildPrivacyContent() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Notification settings
-          _buildToggleItem(
-            title: 'Bahsetmeler',
-            description: 'Diğer kullanıcılar sizi etiketlediğinde bildirim alın.',
-            value: _mentionsEnabled,
-            onChanged: (v) => setState(() => _mentionsEnabled = v),
+          Text(
+            'Gizlilik ve Veri',
+            style: AppTextStyles.bodyLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          _buildToggleItem(
-            title: 'Yeni Etkinlik Davetleri',
-            description: 'Biri sizi yeni bir etkinliğe davet ettiğinde bildirim alın.',
-            value: _newEventInvitesEnabled,
-            onChanged: (v) => setState(() => _newEventInvitesEnabled = v),
+          const SizedBox(height: 8),
+          Text(
+            'Verileriniz sadece cihazınızda saklanır ve asla sunucularımıza gönderilmez.',
+            style: AppTextStyles.bodySmall.copyWith(color: Colors.white.withOpacity(0.6)),
           ),
+          const SizedBox(height: 24),
+          _buildMenuItem(
+            title: 'Gizlilik Politikası',
+            description: 'Uygulamanın gizlilik prensiplerini inceleyin.',
+            icon: Icons.privacy_tip_outlined,
+            onTap: () {},
+          ),
+          _buildMenuItem(
+            title: 'Kullanım Koşulları',
+            description: 'Kullanım şartları ve yasal bilgiler.',
+            icon: Icons.description_outlined,
+            onTap: () {},
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationContent() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           _buildToggleItem(
-            title: 'Hatırlatıcılar',
-            description: 'Görevler, etkinlikler ve eksik bilgiler için bildirim alın.',
+            title: 'Limit Uyarıları',
+            description: 'Uygulama limitine 5 dakika kala bildirim gönder.',
             value: _remindersEnabled,
             onChanged: (v) => setState(() => _remindersEnabled = v),
           ),
           _buildToggleItem(
-            title: 'Duyurular',
-            description: 'Ürün duyuruları ve yeni özellikler için bildirim alın.',
-            value: _announcementsEnabled,
-            onChanged: (v) => setState(() => _announcementsEnabled = v),
-            isLast: false,
+            title: 'Limit Doldu Bildirimi',
+            description: 'Uygulama süresi bittiğinde anında uyar.',
+            value: _mentionsEnabled,
+            onChanged: (v) => setState(() => _mentionsEnabled = v),
+          ),
+          _buildToggleItem(
+            title: 'Haftalık Rapor',
+            description: 'Her Pazar günü haftalık analiz bildirimi al.',
+            value: _newEventInvitesEnabled,
+            onChanged: (v) => setState(() => _newEventInvitesEnabled = v),
+          ),
+          _buildMenuItem(
+            title: 'Sistem Ayarları',
+            description: 'Cihaz bildirim ayarlarına git.',
+            icon: Icons.settings_applications_rounded,
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppContent() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildMenuItem(
+            title: 'Karanlık Mod',
+            description: 'Uygulama temasını değiştir (Yakında).',
+            icon: Icons.dark_mode_rounded,
+            onTap: () {},
           ),
           _buildMenuItem(
             title: 'Widget Ayarları',
-            description: 'Ana ekran widget\'larını özelleştirin.',
+            description: 'Ana ekran araçlarını özelleştirin.',
             icon: Icons.widgets_outlined,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const WidgetSettingsScreen()),
               );
             },
+          ),
+          _buildMenuItem(
+            title: 'Hakkında',
+            description: 'Versiyon 1.0.0+1',
+            icon: Icons.info_outline_rounded,
+            onTap: () {},
+          ),
+          _buildMenuItem(
+            title: 'Geri Bildirim',
+            description: 'Uygulama hakkında fikirlerinizi paylaşın.',
+            icon: Icons.feedback_outlined,
+            onTap: () {},
             isLast: true,
           ),
         ],
@@ -295,11 +372,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             icon: Icons.work_rounded,
             onChanged: (val) => setState(() => _workHours = val),
           ),
+          const SizedBox(height: 24),
+          _buildSliderItem(
+            title: 'Günlük Hedef (Odak)',
+            value: _dailyGoal,
+            min: 1,
+            max: 12,
+            icon: Icons.track_changes_rounded,
+            onChanged: (val) => setState(() => _dailyGoal = val),
+          ),
           const SizedBox(height: 40),
           PrimaryButton(
             text: 'Rutini Kaydet',
             onPressed: () async {
-              await SettingsService.saveRoutineSettings(_sleepHours, _workHours);
+              await SettingsService.saveRoutineSettings(
+                _sleepHours, 
+                _workHours,
+                goal: _dailyGoal,
+              );
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Rutin başarıyla kaydedildi!')),

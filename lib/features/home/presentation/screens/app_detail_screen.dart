@@ -29,6 +29,7 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   Duration? _usageDuration;
   List<Duration> _weeklyUsage = List.filled(7, Duration.zero);
   bool _isLoadingChart = true;
+  int? _currentLimitMinutes; // Mevcut limit varsa buraya yüklenecek
 
   @override
   void initState() {
@@ -71,6 +72,10 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   Future<void> _loadAppUsage() async {
     final usage = await UsageService.getUsageForApp(widget.appName);
     
+    // Mevcut limiti kontrol et
+    final allLimits = await LimitService.getLimits();
+    final existingLimit = allLimits.where((l) => l.packageName == widget.appName).toList();
+    
     // Son 7 günün verilerini yükle
     final List<Duration> weeklyData = [];
     for (int i = 6; i >= 0; i--) {
@@ -90,6 +95,11 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
         _usageDuration = usage;
         _weeklyUsage = weeklyData;
         _isLoadingChart = false;
+        if (existingLimit.isNotEmpty) {
+          _currentLimitMinutes = existingLimit.first.limitMinutes;
+        } else {
+          _currentLimitMinutes = null;
+        }
       });
     }
   }
@@ -396,22 +406,74 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
   }
 
   Widget _buildBottomButton() {
+    final hasLimit = _currentLimitMinutes != null;
+
     return Container(
       color: Colors.white.withOpacity(0.9),
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 40),
-      child: BlueButton(
-        text: 'Süre Limiti Ekle',
-        onPressed: () {
-          _showAddLimitDialog();
-        },
-        showArrow: false,
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          BlueButton(
+            text: hasLimit ? 'Süre Limitini Düzenle' : 'Süre Limiti Ekle',
+            onPressed: () {
+              _showAddLimitDialog();
+            },
+            showArrow: false,
+          ),
+          if (hasLimit) ...[
+            const SizedBox(height: 12),
+            GestureDetector(
+              onTap: () async {
+                // Silme onayı al
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Limiti Sil'),
+                    content: Text('$_displayTitle için belirlenen süreyi silmek istediğinize emin misiniz?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Vazgeç'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Sil', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true) {
+                  await LimitService.deleteLimit(widget.appName);
+                  if (mounted) {
+                    setState(() {
+                      _currentLimitMinutes = null;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Limit silindi')),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                'Limiti Kaldır',
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w600,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
 
   void _showAddLimitDialog() {
-    int hours = 1;
-    int minutes = 0;
+    int hours = _currentLimitMinutes != null ? (_currentLimitMinutes! ~/ 60) : 1;
+    int minutes = _currentLimitMinutes != null ? (_currentLimitMinutes! % 60) : 0;
     
     showModalBottomSheet(
       context: context,
@@ -466,10 +528,13 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                   ));
                   
                   if (mounted) {
+                    setState(() {
+                      _currentLimitMinutes = limitMinutes;
+                    });
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('$_displayTitle için ${hours}sa ${minutes}dk limit eklendi'),
+                        content: Text('$_displayTitle için ${hours}sa ${minutes}dk limit kaydedildi'),
                         backgroundColor: AppColors.success,
                       ),
                     );

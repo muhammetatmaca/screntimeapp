@@ -16,6 +16,7 @@ class AddLimitScreen extends StatefulWidget {
 class _AddLimitScreenState extends State<AddLimitScreen> {
   List<Map<String, String>> _allApps = [];
   List<Map<String, String>> _filteredApps = [];
+  Map<String, int> _existingLimits = {}; // {packageName: limitMinutes}
   bool _isLoading = true;
   String _searchQuery = "";
 
@@ -27,11 +28,19 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
 
   Future<void> _loadApps() async {
     final apps = await UsageService.getInstalledApps();
+    final limits = await LimitService.getLimits();
+    
+    final Map<String, int> limitsMap = {
+      for (var l in limits) l.packageName: l.limitMinutes
+    };
+
     apps.sort((a, b) => a['appName']!.toLowerCase().compareTo(b['appName']!.toLowerCase()));
+    
     if (mounted) {
       setState(() {
         _allApps = apps;
         _filteredApps = apps;
+        _existingLimits = limitsMap;
         _isLoading = false;
       });
     }
@@ -49,14 +58,19 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
   }
 
   void _selectApp(Map<String, String> app) {
+    final existingLimit = _existingLimits[app['packageName']];
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => _TimePickerDialog(app: app),
+      builder: (context) => _TimePickerDialog(
+        app: app, 
+        initialMinutes: existingLimit,
+      ),
     ).then((value) {
       if (value == true) {
-        Navigator.pop(context, true);
+        _loadApps(); // Refresh limits after saving
       }
     });
   }
@@ -104,8 +118,10 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                     itemCount: _filteredApps.length,
                     itemBuilder: (context, index) {
                       final app = _filteredApps[index];
+                      final existingLimit = _existingLimits[app['packageName']];
                       return _AppListItem(
                         app: app,
+                        currentLimitMinutes: existingLimit,
                         onTap: () => _selectApp(app),
                       );
                     },
@@ -119,9 +135,14 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
 
 class _AppListItem extends StatelessWidget {
   final Map<String, String> app;
+  final int? currentLimitMinutes;
   final VoidCallback onTap;
 
-  const _AppListItem({required this.app, required this.onTap});
+  const _AppListItem({
+    required this.app, 
+    required this.onTap,
+    this.currentLimitMinutes,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -160,8 +181,21 @@ class _AppListItem extends StatelessWidget {
           },
         ),
         title: Text(app['appName']!, style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w700)),
-        subtitle: Text(app['packageName']!, style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary), maxLines: 1, overflow: TextOverflow.ellipsis),
-        trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.gray300),
+        subtitle: Text(
+          currentLimitMinutes != null 
+              ? 'Mevcut Limit: ${(currentLimitMinutes! ~/ 60)}s ${(currentLimitMinutes! % 60)}dk'
+              : app['packageName']!, 
+          style: AppTextStyles.labelSmall.copyWith(
+            color: currentLimitMinutes != null ? AppColors.iosBlue : AppColors.textTertiary,
+            fontWeight: currentLimitMinutes != null ? FontWeight.w600 : FontWeight.normal,
+          ), 
+          maxLines: 1, 
+          overflow: TextOverflow.ellipsis
+        ),
+        trailing: Icon(
+          currentLimitMinutes != null ? Icons.edit_rounded : Icons.add_circle_outline_rounded, 
+          color: currentLimitMinutes != null ? AppColors.iosBlue : AppColors.gray300
+        ),
       ),
     );
   }
@@ -169,15 +203,23 @@ class _AppListItem extends StatelessWidget {
 
 class _TimePickerDialog extends StatefulWidget {
   final Map<String, String> app;
-  const _TimePickerDialog({required this.app});
+  final int? initialMinutes;
+  const _TimePickerDialog({required this.app, this.initialMinutes});
 
   @override
   State<_TimePickerDialog> createState() => _TimePickerDialogState();
 }
 
 class _TimePickerDialogState extends State<_TimePickerDialog> {
-  int _hours = 1;
-  int _minutes = 0;
+  late int _hours;
+  late int _minutes;
+
+  @override
+  void initState() {
+    super.initState();
+    _hours = widget.initialMinutes != null ? (widget.initialMinutes! ~/ 60) : 1;
+    _minutes = widget.initialMinutes != null ? (widget.initialMinutes! % 60) : 0;
+  }
 
   @override
   Widget build(BuildContext context) {

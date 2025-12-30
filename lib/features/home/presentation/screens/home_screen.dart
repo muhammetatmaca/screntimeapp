@@ -31,7 +31,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  bool _isInitializing = false;
   int _selectedTabIndex = 0; // 0: Günlük, 1: Haftalık, 2: Aylık
   int _bottomNavIndex = 0;
   bool _showFocusMenu = false;
@@ -49,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -58,14 +60,38 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeData();
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Ayarlardan geri dönüldüğünde veya uygulama öne geldiğinde verileri tazele
+      _initializeData();
+    }
+  }
+
   Future<void> _initializeData() async {
+    if (_isInitializing) return;
+    _isInitializing = true;
+    
     _cachedDayApps.clear();
     setState(() => _isLoading = true);
     
     // İzin kontrolü ve isteme
     bool hasPermission = await UsageService.checkAndRequestPermission();
     if (!hasPermission) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isInitializing = false;
+        });
+      } else {
+        _isInitializing = false;
+      }
       return;
     }
 
@@ -152,7 +178,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ? _weeklyData[_selectedDayIndex].usageTime 
             : Duration.zero;
         _isLoading = false;
+        _isInitializing = false;
       });
+    } else {
+      _isInitializing = false;
     }
   }
 
@@ -309,7 +338,10 @@ class _HomeScreenState extends State<HomeScreen> {
         MaterialPageRoute(
           builder: (context) => const SettingsScreen(),
         ),
-      );
+      ).then((_) {
+        // Ayarlardan geri dönüldüğünde verileri tazele (örneğin günlük hedef değişmiş olabilir)
+        _initializeData();
+      });
     } else {
       setState(() => _bottomNavIndex = index);
     }
@@ -1301,8 +1333,14 @@ class _HomeScreenState extends State<HomeScreen> {
               _GlassSmallButton(
                 text: 'YÖNET',
                 icon: Icons.tune_rounded,
-                onPressed: () {
-                  // Manage limits
+                onPressed: () async {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AddLimitScreen()),
+                  );
+                  if (result == true) {
+                    _loadDynamicLimits();
+                  }
                 },
               ),
             ],
@@ -1320,15 +1358,16 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.only(bottom: 16),
             child: AppLimitCard(
               data: app,
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async {
+                await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => AppDetailScreen(
-                      appName: app.appName,
+                      appName: app.iconType, // limit.packageName iconType'a atanmıştı
                       iconType: app.iconType,
                     ),
                   ),
                 );
+                _loadDynamicLimits();
               },
             ),
           )),
@@ -1565,8 +1604,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ...sortedPkgs.take(15).map((pkg) => _AppUsageItem(
                   packageName: pkg,
                   usage: Duration(milliseconds: apps[pkg]!),
-                  onTap: () {
-                    Navigator.of(context).push(
+                  onTap: () async {
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => AppDetailScreen(
                           appName: pkg,
@@ -1574,6 +1613,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     );
+                    _loadDynamicLimits();
                   },
                 )),
               ],
@@ -1617,8 +1657,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ..._selectedDayApps.take(15).map((app) => _AppUsageItem(
             packageName: app.packageName,
             usage: app.usage,
-            onTap: () {
-              Navigator.of(context).push(
+            onTap: () async {
+              await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => AppDetailScreen(
                     appName: app.packageName,
@@ -1626,6 +1666,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               );
+              _loadDynamicLimits();
             },
           )),
           if (_selectedDayApps.length > 15)

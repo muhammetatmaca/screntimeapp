@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'usage_service.dart';
+import 'settings_service.dart';
 
 class HistoryService {
   static const String _fileName = 'usage_history.json';
@@ -209,56 +210,77 @@ class HistoryService {
 
   /// Mevcut seriyi ve hedef durumunu getir
   static Future<Map<String, dynamic>> getStreakData() async {
-    final history = await getHistory();
-    final now = DateTime.now();
-    int streak = 0;
-    const int dailyGoalMs = 4 * 3600000; // 4 saat hedef
+    try {
+      final history = await getHistory();
+      final now = DateTime.now();
+      int streak = 0;
+      final double goalHours = await SettingsService.getDailyGoalHours();
+      final int dailyGoalMs = (goalHours * 3600000).toInt();
 
-    // Bugünden geriye doğru say
-    for (int i = 0; i < 30; i++) {
-       final date = now.subtract(Duration(days: i));
-       final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-       
-       if (history.containsKey(dateStr)) {
-         final usageMs = history[dateStr]['totalUsageMs'] as int;
-         if (usageMs <= dailyGoalMs) {
-           streak++;
-         } else {
-           // Hedef aşılmış, seri burada biter
-           break;
-         }
-       } else if (i == 0) {
-         // Eğer bugün dosyada henüz yoksa ama biz şu an bakıyorsak, 
-         // bugünü başlangıç (1) olarak kabul edebiliriz (eğer şu anki kullanım hedef altındaysa)
-         // Ancak yukarıda saveDailyData'yı await ettiğimiz için buraya girmemeli.
-         // Yine de fallback olarak kalsın.
-         streak = 1; 
-       } else {
-         // Arada boşluk var (örn: dün uygulama açılmamış), seri bozulur
-         break;
-       }
+      // Bugünden geriye doğru say (Maksimum 30 gün)
+      for (int i = 0; i < 30; i++) {
+        final date = now.subtract(Duration(days: i));
+        final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+        
+        if (history.containsKey(dateStr)) {
+          final dayData = history[dateStr];
+          if (dayData is Map && dayData.containsKey('totalUsageMs')) {
+            final usageMs = (dayData['totalUsageMs'] as num).toInt();
+            if (usageMs <= dailyGoalMs) {
+              streak++;
+            } else {
+              // Hedef aşılmış, seri burada biter
+              break;
+            }
+          } else if (i == 0) {
+            // Bugün verisi henüz yoksa veya hatalıysa, şimdilik başarılı say
+            streak = 1;
+          } else {
+            break;
+          }
+        } else if (i == 0) {
+          // İlk gün (bugün) henüz kaydedilmemişse başarılı başlat
+          streak = 1;
+        } else {
+          // Geçmiş bir gün eksikse zincir kopar
+          break;
+        }
+      }
+
+      return {
+        'streak': streak,
+        'goalHours': goalHours.toInt(),
+      };
+    } catch (e) {
+      return {
+        'streak': 0,
+        'goalHours': 4,
+      };
     }
-
-    return {
-      'streak': streak,
-      'goalHours': 4,
-    };
   }
 
   /// Takvim için günlük durumları getir
   static Future<Map<String, int>> getCalendarData() async {
-    final history = await getHistory();
-    const int dailyGoalMs = 4 * 3600000;
-    Map<String, int> calendar = {};
+    try {
+      final history = await getHistory();
+      final double goalHours = await SettingsService.getDailyGoalHours();
+      final int dailyGoalMs = (goalHours * 3600000).toInt();
+      Map<String, int> calendar = {};
 
-    history.forEach((date, data) {
-      if ((data['totalUsageMs'] as int) <= dailyGoalMs) {
-        calendar[date] = 1; // Başarılı
-      } else {
-        calendar[date] = 2; // Başarısız
-      }
-    });
+      history.forEach((date, data) {
+        if (data is Map && data.containsKey('totalUsageMs')) {
+          final usageMs = (data['totalUsageMs'] as num).toInt();
+          if (usageMs <= dailyGoalMs) {
+            calendar[date] = 1; // Başarılı
+          } else {
+            calendar[date] = 2; // Başarısız
+          }
+        }
+      });
 
-    return calendar;
+      return calendar;
+    } catch (e) {
+      return {};
+    }
   }
 }

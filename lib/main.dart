@@ -4,6 +4,8 @@ import 'core/theme/app_theme.dart';
 import 'features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
 import 'core/services/settings_service.dart';
+import 'core/services/notification_service.dart';
+import 'core/services/background_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +15,11 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  // Bildirim ve Arka Plan Servisini başlat
+  await NotificationService.init();
+  await BackgroundService.init();
+  await BackgroundService.startUsageCheck();
 
   // Check if onboarding is done
   final bool isSetupDone = await SettingsService.isSetupDone();

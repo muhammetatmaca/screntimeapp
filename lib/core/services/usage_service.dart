@@ -6,6 +6,7 @@ import 'package:usage_stats/usage_stats.dart';
 import 'package:flutter/foundation.dart';
 import 'limit_service.dart';
 import 'focus_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AppUsageRecord {
   final String packageName;
@@ -70,12 +71,18 @@ class UsageService {
   }
 
   static Future<bool> checkAndRequestPermission() async {
-    bool? isGranted = await UsageStats.checkUsagePermission();
-    if (isGranted == false) {
+    // 1. Kullanım İstatistikleri İzni
+    bool? isUsageGranted = await UsageStats.checkUsagePermission();
+    if (isUsageGranted == false) {
       await UsageStats.grantUsagePermission();
-      return false;
     }
-    return true;
+
+    // 2. Bildirim İzni (Android 13+)
+    if (Platform.isAndroid) {
+      await Permission.notification.request();
+    }
+
+    return isUsageGranted ?? false;
   }
 
   /// Belirli bir tarih aralığı için toplam kullanımı döndürür

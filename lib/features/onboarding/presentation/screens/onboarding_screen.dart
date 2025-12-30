@@ -212,15 +212,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           
           // Buttons
           if (isFirstPage) ...[
-            // First page: "Hemen Başla" and "Giriş Yap"
+            // First page: "Hemen Başla"
             PrimaryButton(
               text: 'Hemen Başla',
               onPressed: _goToNextPage,
-            ),
-            const SizedBox(height: 12),
-            SecondaryButton(
-              text: 'Giriş Yap',
-              onPressed: _onLogin,
             ),
           ] else if (isLastPage) ...[
             // Last page: "Hemen Başla" full width
