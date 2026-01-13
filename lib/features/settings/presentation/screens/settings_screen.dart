@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:ui';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
@@ -163,7 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           // Title
           Text(
-            'Ayarlar',
+            AppLocalizations.of(context)!.settings,
             style: AppTextStyles.headlineLarge.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,
@@ -174,10 +175,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Tabs
           Row(
             children: [
-              _buildTab('Gizlilik', 0),
-              _buildTab('Bildirimler', 1),
-              _buildTab('Uygulama', 2),
-              _buildTab('Rutin', 3),
+              _buildTab(AppLocalizations.of(context)!.privacy, 0),
+              _buildTab(AppLocalizations.of(context)!.notifications, 1),
+              _buildTab(AppLocalizations.of(context)!.app, 2),
+              _buildTab(AppLocalizations.of(context)!.routine, 3),
             ],
           ),
         ],
@@ -234,24 +235,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gizlilik ve Veri',
+            AppLocalizations.of(context)!.privacyAndData,
             style: AppTextStyles.bodyLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'Verileriniz sadece cihazınızda saklanır ve asla sunucularımıza gönderilmez.',
+            AppLocalizations.of(context)!.privacyDesc,
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white.withOpacity(0.6)),
           ),
           const SizedBox(height: 24),
           _buildMenuItem(
-            title: 'Gizlilik Politikası',
-            description: 'Uygulamanın gizlilik prensiplerini inceleyin.',
+            title: AppLocalizations.of(context)!.privacyPolicy,
+            description: AppLocalizations.of(context)!.privacyPolicyDesc,
             icon: Icons.privacy_tip_outlined,
             onTap: () {},
           ),
           _buildMenuItem(
-            title: 'Kullanım Koşulları',
-            description: 'Kullanım şartları ve yasal bilgiler.',
+            title: AppLocalizations.of(context)!.termsOfService,
+            description: AppLocalizations.of(context)!.termsOfServiceDesc,
             icon: Icons.description_outlined,
             onTap: () {},
             isLast: true,
@@ -269,26 +270,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildToggleItem(
-            title: 'Limit Uyarıları',
-            description: 'Uygulama limitine 5 dakika kala bildirim gönder.',
+            title: AppLocalizations.of(context)!.limitAlerts,
+            description: AppLocalizations.of(context)!.limitAlertsDesc,
             value: _remindersEnabled,
             onChanged: (v) => setState(() => _remindersEnabled = v),
           ),
           _buildToggleItem(
-            title: 'Limit Doldu Bildirimi',
-            description: 'Uygulama süresi bittiğinde anında uyar.',
+            title: AppLocalizations.of(context)!.limitReached,
+            description: AppLocalizations.of(context)!.limitReachedDesc,
             value: _mentionsEnabled,
             onChanged: (v) => setState(() => _mentionsEnabled = v),
           ),
           _buildToggleItem(
-            title: 'Haftalık Rapor',
-            description: 'Her Pazar günü haftalık analiz bildirimi al.',
+            title: AppLocalizations.of(context)!.weeklyReport,
+            description: AppLocalizations.of(context)!.weeklyReportDesc,
             value: _newEventInvitesEnabled,
             onChanged: (v) => setState(() => _newEventInvitesEnabled = v),
           ),
           _buildMenuItem(
-            title: 'Sistem Ayarları',
-            description: 'Cihaz bildirim ayarlarına git.',
+            title: AppLocalizations.of(context)!.systemSettings,
+            description: AppLocalizations.of(context)!.systemSettingsDesc,
             icon: Icons.settings_applications_rounded,
             onTap: () {},
           ),
@@ -305,14 +306,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildMenuItem(
-            title: 'Karanlık Mod',
-            description: 'Uygulama temasını değiştir (Yakında).',
+            title: AppLocalizations.of(context)!.darkMode,
+            description: AppLocalizations.of(context)!.darkModeDesc,
             icon: Icons.dark_mode_rounded,
             onTap: () {},
           ),
           _buildMenuItem(
-            title: 'Widget Ayarları',
-            description: 'Ana ekran araçlarını özelleştirin.',
+            title: AppLocalizations.of(context)!.widgetSettings,
+            description: AppLocalizations.of(context)!.widgetSettingsDesc,
             icon: Icons.widgets_outlined,
             onTap: () {
               Navigator.of(context).push(
@@ -321,14 +322,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           _buildMenuItem(
-            title: 'Hakkında',
-            description: 'Versiyon 1.0.0+1',
+            title: AppLocalizations.of(context)!.about,
+            description: '${AppLocalizations.of(context)!.version} 1.0.0+1',
             icon: Icons.info_outline_rounded,
             onTap: () {},
           ),
           _buildMenuItem(
-            title: 'Geri Bildirim',
-            description: 'Uygulama hakkında fikirlerinizi paylaşın.',
+            title: AppLocalizations.of(context)!.feedback,
+            description: AppLocalizations.of(context)!.feedbackDesc,
             icon: Icons.feedback_outlined,
             onTap: () {},
             isLast: true,
@@ -346,17 +347,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Günlük Rutin',
+            AppLocalizations.of(context)!.dailyRoutine,
             style: AppTextStyles.bodyLarge.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            'Yaşam pilini hesaplamak için uyku ve iş sürelerini girin.',
+            AppLocalizations.of(context)!.dailyRoutineDesc,
             style: AppTextStyles.bodySmall.copyWith(color: Colors.white.withOpacity(0.6)),
           ),
           const SizedBox(height: 32),
           _buildSliderItem(
-            title: 'Ortalama Uyku',
+            title: AppLocalizations.of(context)!.averageSleep,
             value: _sleepHours,
             min: 4,
             max: 12,
@@ -365,7 +366,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 24),
           _buildSliderItem(
-            title: 'Günlük İş / Okul',
+            title: AppLocalizations.of(context)!.dailyWork,
             value: _workHours,
             min: 0,
             max: 14,
@@ -374,7 +375,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 24),
           _buildSliderItem(
-            title: 'Günlük Hedef (Odak)',
+            title: AppLocalizations.of(context)!.dailyFocusGoal,
             value: _dailyGoal,
             min: 1,
             max: 12,
@@ -383,7 +384,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 40),
           PrimaryButton(
-            text: 'Rutini Kaydet',
+            text: AppLocalizations.of(context)!.saveRoutine,
             onPressed: () async {
               await SettingsService.saveRoutineSettings(
                 _sleepHours, 
@@ -392,7 +393,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Rutin başarıyla kaydedildi!')),
+                  SnackBar(content: Text(AppLocalizations.of(context)!.routineSaved)),
                 );
               }
             },
@@ -423,7 +424,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(title, style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
               ],
             ),
-            Text('${value.toStringAsFixed(1)} saat', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+            Text('${value.toStringAsFixed(1)} ${AppLocalizations.of(context)!.hours}', style: AppTextStyles.bodyMedium.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
         SliderTheme(

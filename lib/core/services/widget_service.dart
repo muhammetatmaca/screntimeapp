@@ -5,7 +5,7 @@ class WidgetService {
 
   static Future<void> updateUsageWidget({
     required String usageTime,
-    String status = 'Spent: Odaklandın',
+    String status = 'Flow: Odaklandın',
   }) async {
     try {
       await HomeWidget.saveWidgetData('usage_time', usageTime);

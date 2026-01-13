@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../onboarding/presentation/widgets/onboarding_buttons.dart';
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       // Kullanım Widgetı
       await WidgetService.updateUsageWidget(
         usageTime: '${hours}s ${mins}dk',
-        status: 'Spent: Odaklandın',
+        status: 'Flow: Odaklandın',
       );
 
       // Pil Widgetı
@@ -426,7 +426,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           mainAxisSize: MainAxisSize.min,
           children: [
             _FocusMenuButton(
-              label: 'Odak Modu',
+              label: AppLocalizations.of(context)!.focusMode,
               icon: Icons.donut_large_rounded,
               color: AppColors.iosBlue,
               onTap: () {
@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 12),
             _FocusMenuButton(
-              label: 'Detoks Modu',
+              label: AppLocalizations.of(context)!.detoxMode,
               icon: Icons.spa_rounded,
               color: AppColors.primary,
               onTap: () {
@@ -450,7 +450,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 12),
             _FocusMenuButton(
-              label: 'Pomodoro',
+              label: AppLocalizations.of(context)!.pomodoro,
               icon: Icons.timer_rounded,
               color: const Color(0xFFFF5252),
               onTap: () {
@@ -489,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Kullanım Özeti',
+                    AppLocalizations.of(context)!.usageSummary,
                     style: AppTextStyles.headlineMedium.copyWith(
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
@@ -509,8 +509,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
                 child: Row(
                   children: [
-                    _buildTab('Günlük', 0),
-                    _buildTab('Haftalık', 1),
+                    _buildTab(AppLocalizations.of(context)!.daily, 0),
+                    _buildTab(AppLocalizations.of(context)!.weekly, 1),
                   ],
                 ),
               ),
@@ -605,11 +605,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Yaşam Pili',
+                          AppLocalizations.of(context)!.lifeBattery,
                           style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w800),
                         ),
                         Text(
-                          _isRoutineSet ? 'Uyku & İş dışı zaman' : 'Rutin ayarlanmadı',
+                          _isRoutineSet ? 'Uyku & İş dışı zaman' : AppLocalizations.of(context)!.routineNotSet,
                           style: AppTextStyles.labelSmall.copyWith(color: AppColors.textTertiary),
                         ),
                       ],
@@ -620,7 +620,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      'KALAN',
+                      AppLocalizations.of(context)!.remaining,
                       style: AppTextStyles.overline.copyWith(color: AppColors.textTertiary, fontSize: 10),
                     ),
                     Text(
@@ -638,7 +638,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             // Battery bar
             if (!_isRoutineSet)
                SecondaryButton(
-                 text: 'Rutini Ayarla',
+                 text: AppLocalizations.of(context)!.setRoutine,
                  onPressed: () async {
                    await Navigator.of(context).push(
                      MaterialPageRoute(builder: (context) => const SettingsScreen()),
@@ -743,7 +743,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         children: [
           // Label
           Text(
-            'BUGÜN TOPLAM',
+            AppLocalizations.of(context)!.todayTotal,
             style: AppTextStyles.overline.copyWith(
               color: AppColors.textTertiary,
               letterSpacing: 2,

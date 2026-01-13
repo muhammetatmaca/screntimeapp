@@ -1,5 +1,5 @@
 name: spent_time_focus
-description: "Spent: Time & Focus - Ekran süresi takip ve dijital farkındalık uygulaması"
+description: "Flow: Focus & Screen Time - Ekran süresi takip ve dijital farkındalık uygulaması"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -23,6 +23,12 @@ dependencies:
   home_widget: ^0.8.1
   flutter_local_notifications: ^19.5.0
   workmanager: ^0.7.0
+  share_plus: ^12.0.1
+  screenshot: ^3.0.0
+  flutter_native_splash: ^2.4.4
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +43,7 @@ flutter_launcher_icons:
   min_sdk_android: 21 # android min sdk min:16, default:21
 
 flutter:
+  generate: true
   uses-material-design: true
 
   assets:
@@ -67,3 +74,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: "assets/Gemini_Generated_Image_4dn3si4dn3si4dn3-Photoroom.png"
+  android_12:
+    image: "assets/Gemini_Generated_Image_4dn3si4dn3si4dn3-Photoroom.png"
+    icon_background_color: "#ffffff"
+  ios: true

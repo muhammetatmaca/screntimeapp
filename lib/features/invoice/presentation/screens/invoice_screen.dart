@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-// import 'package:screenshot/screenshot.dart';
-// import 'package:share_plus/share_plus.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:path_provider/path_provider.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart'; // Removed
 import 'package:permission_handler/permission_handler.dart';
@@ -20,7 +21,7 @@ class InvoiceScreen extends StatefulWidget {
 }
 
 class _InvoiceScreenState extends State<InvoiceScreen> {
-  // final ScreenshotController _screenshotController = ScreenshotController();
+  final ScreenshotController _screenshotController = ScreenshotController();
   List<AppUsageRecord> _apps = [];
   bool _isLoading = true;
   Duration _totalUsage = Duration.zero;
@@ -48,20 +49,25 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
   }
 
   Future<void> _shareScreenshot() async {
-    // TODO: Re-enable when packages are added
-    _showSnackBar('Paylaşım özelliği yakında eklenecek!');
-    // try {
-    //   final image = await _screenshotController.capture();
-    //   if (image != null) {
-    //     final directory = await getTemporaryDirectory();
-    //     final imagePath = await File('${directory.path}/spending_invoice.png').create();
-    //     await imagePath.writeAsBytes(image);
-    //     
-    //     await Share.shareXFiles([XFile(imagePath.path)], text: 'Günlük Ekran Süresi Extresi 📱');
-    //   }
-    // } catch (e) {
-    //   _showSnackBar('Paylaşım sırasında bir hata oluştu.');
-    // }
+    try {
+      final image = await _screenshotController.capture(
+        delay: const Duration(milliseconds: 10),
+        pixelRatio: 2.0, // Daha net görüntü için
+      );
+      
+      if (image != null) {
+        final directory = await getTemporaryDirectory();
+        final imagePath = File('${directory.path}/spending_invoice.png');
+        await imagePath.writeAsBytes(image);
+        
+        await Share.shareXFiles(
+          [XFile(imagePath.path)], 
+          text: AppLocalizations.of(context)!.shareText
+        );
+      }
+    } catch (e) {
+      _showSnackBar('Paylaşım sırasında bir hata oluştu: $e');
+    }
   }
 
   void _showSnackBar(String message) {
@@ -88,8 +94,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.iosBlue, size: 22),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
-          'Fatura',
+        title: Text(
+          AppLocalizations.of(context)!.invoiceTitle,
           style: TextStyle(
             color: Colors.black,
             fontSize: 17,
@@ -109,7 +115,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.ios_share, color: AppColors.iosBlue, size: 24),
-            onPressed: () {},
+            onPressed: _shareScreenshot,
           ),
         ],
       ),
@@ -123,13 +129,18 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 16),
-                    // Screenshot widget disabled for now
-                    _buildReceiptCard(),
+                    Screenshot(
+                      controller: _screenshotController,
+                      child: Container(
+                        color: const Color(0xFFF2F2F7), // Background color for captured area
+                        child: _buildReceiptCard(),
+                      ),
+                    ),
                     const SizedBox(height: 16),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40),
                       child: Text(
-                        'Bu belge günlük dijital kullanım özetinizdir. Veriler cihazınızdan anlık olarak alınmaktadır.',
+                        AppLocalizations.of(context)!.invoiceDesc,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF8E8E93),
@@ -192,8 +203,8 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                     children: [
                       const Icon(Icons.receipt_long_rounded, size: 48, color: Colors.black),
                       const SizedBox(height: 24),
-                      const Text(
-                        'EKRAN SÜRESİ\nEXTRESİ',
+                      Text(
+                        AppLocalizations.of(context)!.invoiceSubtitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 24,
@@ -204,7 +215,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'FİŞ NO: ${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}-99',
+                        '${AppLocalizations.of(context)!.receiptNo}: ${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}-99',
                         style: TextStyle(
                           fontSize: 13,
                           color: const Color(0xFF636366),
@@ -236,7 +247,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         child: _buildReceiptItem(
                           iconBase64: app.iconBase64,
                           name: app.appName ?? app.packageName.split('.').last,
-                          category: 'Uygulama',
+                          category: AppLocalizations.of(context)!.appType,
                           duration: _formatDurationShort(app.usage),
                           percentage: _totalUsage.inMinutes > 0 
                               ? '%${((app.usage.inMinutes / _totalUsage.inMinutes) * 100).toStringAsFixed(0)}'
@@ -267,9 +278,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         painter: _DashPainter(),
                       ),
                       const SizedBox(height: 24),
-                      _buildTotalRow('AKTİF SÜRE', _formatDurationShort(_totalUsage)),
+                      _buildTotalRow(AppLocalizations.of(context)!.activeTime, _formatDurationShort(_totalUsage)),
                       const SizedBox(height: 12),
-                      _buildTotalRow('BOŞTA KALAN', _formatDurationShort(const Duration(hours: 24) - _totalUsage)),
+                      _buildTotalRow(AppLocalizations.of(context)!.idleTime, _formatDurationShort(const Duration(hours: 24) - _totalUsage)),
                       const SizedBox(height: 16),
                       const Divider(color: Colors.black, thickness: 1.5),
                       const SizedBox(height: 16),
@@ -278,7 +289,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           const Text(
-                            'TOPLAM KULLANIM',
+                           AppLocalizations.of(context)!.totalUsage,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
@@ -322,9 +333,9 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          'DURUM: ONAYLANDI',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.statusConfirmed,
+                          style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1,
@@ -363,13 +374,13 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'HİZMET',
+            AppLocalizations.of(context)!.service,
             style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
           ),
           Row(
             children: [
-              SizedBox(width: 48, child: Text('SÜRE', textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1))),
-              SizedBox(width: 64, child: Text('PAY', textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1))),
+              SizedBox(width: 48, child: Text(AppLocalizations.of(context)!.duration, textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1))),
+              SizedBox(width: 64, child: Text(AppLocalizations.of(context)!.share, textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1))),
             ],
           ),
         ],
@@ -531,7 +542,7 @@ class _InvoiceScreenState extends State<InvoiceScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Kapat',
+                AppLocalizations.of(context)!.close,
                 style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
               ),
             ),

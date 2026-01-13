@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | Flow: Focus & Screen Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --primary-gradient: linear-gradient(135deg, #007AFF 0%, #00C6FF 100%);
+            --background: #F8F9FE;
+            --text-main: #1D1D1F;
+            --text-secondary: #48484A;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border: rgba(0, 0, 0, 0.05);
+            --accent: #E8F2FF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .decorative-blob {
+            position: fixed;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.4;
+            border-radius: 50%;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: #007AFF;
+            top: -100px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: #00C6FF;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        header {
+            padding: 80px 20px 40px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .brand-pill {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--accent);
+            color: var(--primary);
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            background: linear-gradient(to bottom, #1D1D1F, #48484A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .update-date {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid white;
+            padding: 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        section {
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 24px;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+
+        li {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .highlight-box {
+            background: var(--background);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 32px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 30px;
+                border-radius: 24px;
+            }
+
+            header {
+                padding: 60px 20px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="decorative-blob blob-1"></div>
+    <div class="decorative-blob blob-2"></div>
+
+    <header>
+        <div class="brand-pill">Flow: Focus & Screen Time</div>
+        <h1>Privacy Policy</h1>
+        <p class="update-date">Last Updated: January 13, 2026</p>
+    </header>
+
+    <main>
+        <div class="glass-card">
+            <section>
+                <h2>Introduction</h2>
+                <p>Welcome to <strong>Flow: Focus & Screen Time</strong>. Your privacy is not just a feature; it's our
+                    core principle. This policy explains how VirelonSoft handles your data when you use our application.
+                </p>
+            </section>
+
+            <section>
+                <h2>Data Sovereignty</h2>
+                <div class="highlight-box">
+                    <p><strong>Strict Privacy Rule:</strong> Flow operates on a "Local-First" basis. Your app usage
+                        data, screen time statistics, and personal habits never leave your device.</p>
+                </div>
+                <p>We do not use any external servers to process your usage stats. All analysis happens locally on your
+                    hardware to ensure maximum speed and total privacy.</p>
+            </section>
+
+            <section>
+                <h2>Information We Process</h2>
+                <p>To provide you with accurate insights, Flow requests access to:</p>
+                <ul>
+                    <li><strong>Usage Statistics:</strong> To track which apps you use and for how long.</li>
+                    <li><strong>Notification Access:</strong> Only if you enable the Notification Blocker feature.</li>
+                    <li><strong>System Settings:</strong> To manage Focus and Detox modes.</li>
+                </ul>
+                <p>None of this information is transmitted to <strong>VirelonSoft</strong> or any third parties.</p>
+            </section>
+
+            <section>
+                <h2>Third-Party Services</h2>
+                <p>We do not integrate with third-party tracking or advertising SDKs that compromise your anonymity. The
+                    app is designed to be a clean, distraction-free environment.</p>
+            </section>
+
+            <section>
+                <h2>Your Rights</h2>
+                <p>Because your data is stored locally, you have full control over it at all times. You can:</p>
+                <ul>
+                    <li>Clear all usage history from the app settings.</li>
+                    <li>Revoke permissions through your device system settings.</li>
+                    <li>Export your data for personal backup.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Contact Us</h2>
+                <p>If you have any questions about this Privacy Policy or our modern approach to data, feel free to
+                    contact us:</p>
+                <p><strong>VirelonSoft</strong><br>
+                    Email: support@virelon.com</p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 VirelonSoft. All rights reserved.
+    </footer>
+</body>
+
+</html>

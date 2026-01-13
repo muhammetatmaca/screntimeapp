@@ -5,6 +5,12 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def signupPropertiesFile = rootProject.file('key.properties')
+def signupProperties = new Properties()
+if (signupPropertiesFile.exists()) {
+    signupProperties.load(new FileInputStream(signupPropertiesFile))
+}
+
 android {
     namespace = "com.virelon.spent_time_focus"
     compileSdk = 36
@@ -29,11 +35,23 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            keyAlias = signupProperties['keyAlias']
+            keyPassword = signupProperties['keyPassword']
+            storeFile = signupProperties['storeFile'] ? file(signupProperties['storeFile']) : null
+            storePassword = signupProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
-            minifyEnabled = false
-            shrinkResources = false
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.release
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     

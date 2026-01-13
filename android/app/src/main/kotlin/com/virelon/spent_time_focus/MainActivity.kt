@@ -211,30 +211,40 @@ class MainActivity: FlutterActivity() {
             val packageName = event.packageName
             val eventTime = event.timeStamp
 
-            if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                appStartMap[packageName] = eventTime
-            } else if (event.eventType == UsageEvents.Event.MOVE_TO_BACKGROUND) {
-                val appStartTime = appStartMap[packageName]
+            // Sadece sorgu aralığındaki olayları işle
+            if (eventTime < startTime) continue
+            if (eventTime > endTime) break
 
-                if (appStartTime != null) {
-                    val clippedStart = maxOf(appStartTime, startTime)
-                    val clippedEnd = minOf(eventTime, endTime)
-                    
-                    if (clippedEnd > clippedStart) {
-                        val duration = clippedEnd - clippedStart
-                        appUsageMap[packageName] = (appUsageMap[packageName] ?: 0L) + duration
+            when (event.eventType) {
+                UsageEvents.Event.ACTIVITY_RESUMED,
+                UsageEvents.Event.MOVE_TO_FOREGROUND -> {
+                    appStartMap[packageName] = eventTime
+                }
+                UsageEvents.Event.ACTIVITY_PAUSED,
+                UsageEvents.Event.MOVE_TO_BACKGROUND -> {
+                    val appStartTime = appStartMap[packageName]
+
+                    if (appStartTime != null) {
+                        val duration = eventTime - appStartTime
+                        // 24 saatten uzun süren tekil oturumlar muhtemelen hatalıdır
+                        if (duration > 0 && duration < 24 * 60 * 60 * 1000L) {
+                            appUsageMap[packageName] = (appUsageMap[packageName] ?: 0L) + duration
+                        }
+                        appStartMap.remove(packageName)
                     }
-                    appStartMap.remove(packageName)
                 }
             }
         }
 
+        // Şu an açık olan uygulama varsa (aktif oturum)
         val now = System.currentTimeMillis()
-        if (endTime >= now - 60000) {
+        // Eğer sorgu aralığı "şimdi"yi kapsıyorsa
+        if (endTime >= now - 30000) {
             appStartMap.forEach { (packageName, appStartTime) ->
-                val clippedStart = maxOf(appStartTime, startTime)
-                val duration = now - clippedStart
-                if (duration > 0) {
+                val duration = now - appStartTime
+                // Eğer oturum 2 saatten fazladır "açık" görünüyorsa, muhtemelen arkaplanda kapanış olayı kaçırılmıştır.
+                // Banka/QR uygulamaları genellikle 2-5 dk içinde otomatik kapanır.
+                if (duration > 0 && duration < 2 * 60 * 60 * 1000L) {
                     appUsageMap[packageName] = (appUsageMap[packageName] ?: 0L) + duration
                 }
             }
